@@ -3,6 +3,12 @@
 Installation
 
 ```
+python -m pip install git+git://github.com/GerbenBeintema/gym-unbalanced-disk@master
+```
+
+or
+
+```
 git clone git@github.com:upb-lea/gym-electric-motor.git 
 #(or use download github page)
 cd gym-electric-motor
@@ -25,6 +31,6 @@ for i in range(200):
     env.render()
     time.sleep(1/24)
     if done:
-      obs = env.reset()
+        obs = env.reset()
 env.close()
 ```

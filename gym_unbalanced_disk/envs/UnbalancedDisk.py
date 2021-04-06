@@ -16,7 +16,7 @@ class UnbalancedDisk(gym.Env):
                   np.pi = starting location
 
     '''
-    def __init__(self):
+    def __init__(self, Fmax=3.):
         ############# start do not edit  ################
         self.g = 9.80155078791343
         self.J = 0.000244210523960356
@@ -26,11 +26,12 @@ class UnbalancedDisk(gym.Env):
         self.tau = 0.397973147009910
         ############# end do not edit ###################
 
+        self.Fmax = Fmax
         self.dt = 0.025 #time step
  
 
         # change anything here (compilable with the exercise instructions)
-        self.action_space = spaces.Box(low=np.array([-3]),high=np.array([3]),shape=(1,)) #continues
+        self.action_space = spaces.Box(low=np.array([-Fmax]),high=np.array([Fmax]),shape=(1,)) #continues
         # self.action_space = spaces.Discrete(2) #discrete
         low = [-1,-1,-float('inf')] 
         high = [1,1,float('inf')]
@@ -49,17 +50,15 @@ class UnbalancedDisk(gym.Env):
         # self.u = [-3,3][action] #discrate
 
         ##### Start Do not edit ######
-        self.u = np.clip(self.u,-3,3)
+        self.u = np.clip(self.u,-self.Fmax,self.Fmax)
         f = lambda t,y: [y[1],self.M*self.g*self.I/self.J*np.sin(y[0]) + self.u*self.Km/self.tau - 1/self.tau*y[1]]
         sol = solve_ivp(f,[0,self.dt],[self.th,self.omega]) #integration
         self.th, self.omega = sol.y[:,-1]
         ##### End do not edit   #####
 
         reward = self.reward_fun(self)
-
         return self.get_obs(), reward, False, {}
         
-
     def reset(self,seed=None):
         self.th = np.random.normal(loc=np.pi,scale=0.001)
         self.omega = np.random.normal(loc=0,scale=0.001)
@@ -69,7 +68,6 @@ class UnbalancedDisk(gym.Env):
     def get_obs(self):
         self.th_noise = self.th + np.random.normal(loc=0,scale=0.001) #do not edit
         self.omega_noise = self.omega + np.random.normal(loc=0,scale=0.001) #do not edit
-
         return np.array([np.sin(self.th_noise), np.cos(self.th_noise), self.omega_noise]) #change anything here
 
     def render(self, mode='human'):
@@ -94,7 +92,6 @@ class UnbalancedDisk(gym.Env):
         self.pole_transform.set_rotation(self.th + np.pi / 2)
         if self.u:
             self.imgtrans.scale = (-self.u / 2, np.abs(self.u) / 2)
-
         return self.viewer.render(return_rgb_array=mode == 'rgb_array')
 
     def close(self):
