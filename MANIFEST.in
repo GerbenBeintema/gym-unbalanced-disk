@@ -1,1 +1,1 @@
-include *.png
+recursive-include src *.png
