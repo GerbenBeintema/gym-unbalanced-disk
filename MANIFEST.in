@@ -1,1 +1,2 @@
+include README.md gym_unbalanced_disk/envs/clockwise.png
 recursive-include src *.png
