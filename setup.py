@@ -14,5 +14,5 @@ setuptools.setup(
       python_requires = '>=3.6',
       packages=packages,
       install_requires = ['gym','numpy','scipy'],
-      data_files = [('envs',['clockwise.png'])]
+      include_package_data=True
       )
