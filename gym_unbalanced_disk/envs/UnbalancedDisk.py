@@ -16,7 +16,7 @@ class UnbalancedDisk(gym.Env):
                   np.pi = starting location
 
     '''
-    def __init__(self, Fmax=3.):
+    def __init__(self, Fmax=3., dt = 0.1):
         ############# start do not edit  ################
         self.g = 9.80155078791343
         self.J = 0.000244210523960356
@@ -27,14 +27,14 @@ class UnbalancedDisk(gym.Env):
         ############# end do not edit ###################
 
         self.Fmax = Fmax
-        self.dt = 0.025 #time step
+        self.dt = dt #time step
  
 
         # change anything here (compilable with the exercise instructions)
-        self.action_space = spaces.Box(low=np.array([-Fmax]),high=np.array([Fmax]),shape=(1,)) #continues
+        self.action_space = spaces.Box(low=-Fmax,high=Fmax,shape=tuple()) #continues
         # self.action_space = spaces.Discrete(2) #discrete
-        low = [-1,-1,-float('inf')] 
-        high = [1,1,float('inf')]
+        low = [-1,-1,-40.] 
+        high = [1,1,40.]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(3,))
 
         self.reward_fun = lambda self: np.exp(-((self.th+np.pi)%(2*np.pi)-np.pi)**2/(2*(np.pi/7)**2)) #example reward function, change this!
@@ -43,9 +43,9 @@ class UnbalancedDisk(gym.Env):
         self.u = 0 #for visual
         self.reset()
 
-    def step(self,action):
+    def step(self, action):
         #convert action to u
-        self.u = action[0] #continues
+        self.u = action #continues
         # self.u = [-3,-1,0,1,3][action] #discrate
         # self.u = [-3,3][action] #discrate
 
@@ -98,3 +98,17 @@ class UnbalancedDisk(gym.Env):
         if self.viewer:
             self.viewer.close()
             self.viewer = None
+
+
+class UnbalancedDisk_th(UnbalancedDisk):
+    """docstring for UnbalancedDisk_th"""
+    def __init__(self, Fmax=3., dt = 0.025):
+        super(UnbalancedDisk_th, self).__init__(Fmax=Fmax, dt=dt)
+        low = [-float('inf'),-40] 
+        high = [float('inf'),40]
+        self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(2,))
+
+    def get_obs(self):
+        self.th_noise = self.th + np.random.normal(loc=0,scale=0.001) #do not edit
+        self.omega_noise = self.omega + np.random.normal(loc=0,scale=0.001) #do not edit
+        return [self.th_noise, self.omega_noise]

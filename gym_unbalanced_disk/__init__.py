@@ -1,5 +1,5 @@
 from gym.envs.registration import register
-
+from gym_unbalanced_disk.envs.UnbalancedDisk import UnbalancedDisk, UnbalancedDisk_th
 
 register(
     id='unbalanced-disk-v0',
