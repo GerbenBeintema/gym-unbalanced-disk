@@ -1,11 +1,13 @@
 import setuptools
 from setuptools import setup, find_namespace_packages
 
-packages = [a for a in find_namespace_packages(where='.') if a[:6]=='deepSI']
+packages = [a for a in find_namespace_packages(where='.') if a.find('gym_unbalanced_disk')==0]
 
+print('find_namespace_packages',find_namespace_packages(where='.'))
+print('packages=',packages)
 setuptools.setup(
       name='gym_unbalanced_disk',
-      version='0.0.4',
+      version='0.0.5',
       description='An OpenAI gym environment for unbalanced disk.',
       url="https://github.com/GerbenBeintema/gym-unbalanced-disk",
       author = 'Gerben Beintema',
