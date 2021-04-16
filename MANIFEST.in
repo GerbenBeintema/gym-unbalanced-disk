@@ -1,1 +1,1 @@
-recursive-include gym_unbalanced_disk *.png
+recursive-include gym_unbalanced_disk *.png *.m *.mexa64 *.mexglx *.mexmaci64 *.mexw32 *.mexw64 *.hex

@@ -1,0 +1,288 @@
+; Installation INF for the Cypress Generic USB Driver for %OPERATING_SYSTEM%
+; Processor support for %PLATFORM% platforms.
+; Modified for DCSC USB DAQ interfaces by Will van Geest
+; Copyright: Delft University of Technology
+;            Faculty Mechanical, Maritime and Materials Engineering
+;            Delft Center for Systems and Control
+[Version]
+Signature="$WINDOWS NT$"
+Class=USB
+ClassGUID={36FC9E60-C465-11CF-8056-444553540000}
+provider=%DCSCUSB_Provider%
+CatalogFile=DcscUSBx64.cat
+DriverVer=01/18/2019,1.0.0.11
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+[Manufacturer]
+%DCSCUSB_Provider%=Device,NT,NTx86,NTamd64
+
+;--------------------------------------------------------------
+; Models section
+;--------------------------------------------------------------
+
+;
+; Device ID to driver translation
+;   for x64 platforms
+[Device.NTamd64]
+%VID_04B4&PID_8613.DeviceDesc%=CyUsb3, USB\VID_04B4&PID_8613
+%VID_04B4&PID_8612.DeviceDesc%=DCSCUSB, USB\VID_04B4&PID_8612
+
+;for x86 platforms
+[Device.NTx86]
+%VID_04B4&PID_8613.DeviceDesc%=CyUsb3, USB\VID_04B4&PID_8613
+%VID_04B4&PID_8612.DeviceDesc%=DCSCUSB, USB\VID_04B4&PID_8612
+
+;   for all NT platforms
+[Device.NT]
+%VID_04B4&PID_8613.DeviceDesc%=CyUsb3, USB\VID_04B4&PID_8613
+%VID_04B4&PID_8612.DeviceDesc%=DCSCUSB, USB\VID_04B4&PID_8612
+
+;--------------------------------------------------------------
+; Device and platform independend sections
+;--------------------------------------------------------------
+[SourceDisksNames]
+1=%DCSCUSB_Install%,,,
+
+[SourceDisksFiles]
+DcscUSBx86.sys = 1
+DcscUSBx64.sys = 1
+DcscUSB.spt = 1
+WdfCoInstaller01011.dll=1
+
+[DCSCSCRIPT.AddReg.Guid]
+HKR,,DriverGUID,,%DCSCUSB.GUID%
+HKR,,DriverEXECSCRIPT,,%CYUSB.EXECSCRIPT%
+;HKR,,DriverPowerPolicySetup,,%ENABLE_DRIVER_POWER_POLICY%
+
+[DCSCDRIVER.AddReg.Guid]
+HKR,,DriverGUID,,%DCSCUSB.GUID%
+;HKR,,DriverPowerPolicySetup,,%ENABLE_DRIVER_POWER_POLICY%
+
+[DestinationDirs]
+DCSCSCRIPT.Files.Ext = 10,System32\Drivers
+DCSCDRIVER.NT.Files.Ext = 10,System32\Drivers
+DCSCDRIVER.NTx86.Files.Ext = 10,System32\Drivers
+DCSCDRIVER.NTamd64.Files.Ext = 10,System32\Drivers
+CoInstaller_CopyFiles = 11
+
+[CoInstaller_CopyFiles]
+WdfCoInstaller01011.dll
+
+[CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller01011.dll,WdfCoInstaller"
+
+[DCSCUSB_wdfsect]
+KmdfLibraryVersion = 1.11
+
+[DCSCSCRIPT.Files.Ext]
+DcscUSB.spt
+
+;--------------------------------------------------------------
+; Device independend sections for NT AMD64 platforms
+;--------------------------------------------------------------
+[DCSCDRIVER.NTamd64.AddReg]
+; Deprecating - do not use in new apps to identify a DCSCUSB driver
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,DcscUSBx64.sys
+; You may optionally include a check for DriverBase in your application to check for a DCSCUSB driver
+HKR,,DriverBase,,DcscUSBx64.sys
+HKR,"Parameters","MaximumTransferSize",0x10001,4096
+HKR,"Parameters","DebugLevel",0x10001,2
+HKR,,FriendlyName,,%DCSCUSB_Description%
+
+[DCSCDRIVER.NTamd64.AddService]
+DisplayName    = %DCSCUSB_Description%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\DcscUSBx64.sys
+AddReg         = DCSCDRIVER.NTamd64.AddReg
+LoadOrderGroup = Base
+
+[DCSCDRIVER.NTamd64.Files.Ext]
+DcscUSBx64.sys
+
+;--------------------------------------------------------------
+; Device independend sections for NT X86 platforms
+;--------------------------------------------------------------
+[DCSCDRIVER.NTx86.AddReg]
+; Deprecating - do not use in new apps to identify a DCSCUSB driver
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,DcscUSBx86.sys
+; You may optionally include a check for DriverBase in your application to check for a DCSCUSB driver
+HKR,,DriverBase,,DcscUSBx86.sys
+HKR,"Parameters","MaximumTransferSize",0x10001,4096
+HKR,"Parameters","DebugLevel",0x10001,2
+HKR,,FriendlyName,,%DCSCUSB_Description%
+
+[DCSCDRIVER.NTx86.AddService]
+DisplayName    = %DCSCUSB_Description%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\DcscUSBx86.sys
+AddReg         = DCSCDRIVER.NTx86.AddReg
+LoadOrderGroup = Base
+
+[DCSCDRIVER.NTx86.Files.Ext]
+DcscUSBx86.sys
+
+;--------------------------------------------------------------
+; Device independend sections for other NT platforms
+;--------------------------------------------------------------
+[DCSCDRIVER.NT.AddReg]
+; Deprecating - do not use in new apps to identify a DCSCUSB driver
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,DcscUSBx86.sys
+; You may optionally include a check for DriverBase in your application to check for a DCSCUSB driver
+HKR,,DriverBase,,DcscUSBx86.sys
+HKR,"Parameters","MaximumTransferSize",0x10001,4096
+HKR,"Parameters","DebugLevel",0x10001,2
+HKR,,FriendlyName,,%DCSCUSB_Description%
+
+[DCSCDRIVER.NT.AddService]
+DisplayName    = %DCSCUSB_Description%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\DcscUSBx86.sys
+AddReg         = DCSCDRIVER.NT.AddReg
+LoadOrderGroup = Base
+
+[DCSCDRIVER.NT.Files.Ext]
+DcscUSBx86.sys
+
+;--------------------------------------------------------------
+; CyUsb3 DDinstall section for NT X64 platforms
+;--------------------------------------------------------------
+[CyUsb3.NTamd64]
+CopyFiles=DCSCDRIVER.NTamd64.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NTamd64.AddReg
+
+[CyUsb3.NTamd64.HW]
+AddReg=DCSCSCRIPT.AddReg.Guid
+
+[CyUsb3.NTamd64.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NTamd64.AddService
+
+[CyUsb3.NTamd64.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CyUsb3.NTamd64.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+;--------------------------------------------------------------
+; CyUsb3 DDinstall section for NT X86 platforms
+;--------------------------------------------------------------
+[CyUsb3.NTx86]
+CopyFiles=DCSCDRIVER.NTx86.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NTx86.AddReg
+
+[CyUsb3.NTx86.HW]
+AddReg=DCSCSCRIPT.AddReg.Guid
+
+[CyUsb3.NTx86.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NTx86.AddService
+
+[CyUsb3.NTx86.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CyUsb3.NTx86.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+;--------------------------------------------------------------
+; CyUsb3 DDinstall section for all other NT platforms
+;--------------------------------------------------------------
+[CyUsb3.NT]
+CopyFiles=DCSCDRIVER.NT.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NT.AddReg
+
+[CyUsb3.NT.HW]
+AddReg=DCSCSCRIPT.AddReg.Guid
+
+[CyUsb3.NT.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NT.AddService
+
+[CyUsb3.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[CyUsb3.NT.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+;--------------------------------------------------------------
+; DCSCUSB DDinstall section for NT X64 platforms
+;--------------------------------------------------------------
+[DCSCUSB.NTamd64]
+CopyFiles=DCSCDRIVER.NTamd64.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NTamd64.AddReg
+
+[DCSCUSB.NTamd64.HW]
+AddReg=DCSCDRIVER.AddReg.Guid
+
+[DCSCUSB.NTamd64.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NTamd64.AddService
+
+[DCSCUSB.NTamd64.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[DCSCUSB.NTamd64.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+;--------------------------------------------------------------
+; DCSCUSB DDinstall section for NT X86 platforms
+;--------------------------------------------------------------
+[DCSCUSB.NTx86]
+CopyFiles=DCSCDRIVER.NTx86.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NTx86.AddReg
+
+[DCSCUSB.NTx86.HW]
+AddReg=DCSCDRIVER.AddReg.Guid
+
+[DCSCUSB.NTx86.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NTx86.AddService
+
+[DCSCUSB.NTx86.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[DCSCUSB.NTx86.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+;--------------------------------------------------------------
+; DCSCUSB DDinstall section for all other NT platforms
+;--------------------------------------------------------------
+[DCSCUSB.NT]
+CopyFiles=DCSCDRIVER.NT.Files.Ext, DCSCSCRIPT.Files.Ext
+AddReg=DCSCDRIVER.NT.AddReg
+
+[DCSCUSB.NT.HW]
+AddReg=DCSCDRIVER.AddReg.Guid
+
+[DCSCUSB.NT.Services]
+Addservice = DcscUSB,2,DCSCDRIVER.NT.AddService
+
+[DCSCUSB.NT.CoInstallers]
+AddReg=CoInstaller_AddReg
+CopyFiles=CoInstaller_CopyFiles
+
+[DCSCUSB.NT.Wdf]
+KmdfService = DCSCUSB, DCSCUSB_wdfsect
+
+[Strings]
+DCSCUSB_Provider    = "DCSC"
+DCSCUSB_Company     = "Delft Center for Systems and Control"
+DCSCUSB_Description = "DCSC FPGA Application Driver"
+DCSCUSB_DisplayName = "DCSC FPGA Application"
+DCSCUSB_Install     = "DCSC USB DAQ Driver Installation Disk"
+VID_04B4&PID_8613.DeviceDesc="Cypress FX2 without EEPROM"
+VID_04B4&PID_8612.DeviceDesc="DCSC FPGA application"
+DCSCUSB.GUID="{AE18AA60-7F6A-11D4-97DD-00010229B959}"
+CYUSB.EXECSCRIPT="\systemroot\system32\drivers\DcscUSB.spt"
+;ENABLE_DRIVER_POWER_POLICY="1"
+DCSCUSB_Unused      = "."
