@@ -12,12 +12,12 @@ Note: If driver signature enforcement is already disabled, start with step 10.
 2) Open the Start Menu, type "Bitlocker" and start it if present, otherwise continue to step 4.
 3) Click on "Back up your recovery key" and save/write down your 48 digit recovery key.
 4) Hold shift while selecting restart to open Advcanced startup
-5) Click on the Start Menu button and type "recovery options".
-6) Click on Troubleshoot.
-7) Click on Advanced options.
-8) Click on Startup Settings. (You might need to select "more options")
-9) Click on Restart.
-10) Wait while the PC restarts and then press key 7.
+5) Click on Troubleshoot.
+6) Click on Advanced options.
+7) Click on Startup Settings. (You might need to select "more options")
+8) Click on Restart.
+9) Wait while the PC restarts and you might be asked to enter your Bitlocker recovery key otherwise skip this step.
+10) press key 7
 11) Login again and unpack the drivers zip file in a directory.
 12) Open the Start Menu, type "device manager" and start it.
 13) Right-click on the name of the setup (sometimes just called Unknown device) 

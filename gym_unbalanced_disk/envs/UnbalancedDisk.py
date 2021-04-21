@@ -72,26 +72,41 @@ class UnbalancedDisk(gym.Env):
     def render(self, mode='human'):
         if self.viewer is None:
             from gym.envs.classic_control import rendering
+            self.r = 1.25
+
             self.viewer = rendering.Viewer(500, 500)
-            self.viewer.set_bounds(-2.2, 2.2, -2.2, 2.2)
-            rod = rendering.make_capsule(1, .2)
-            rod.set_color(.8, .3, .3)
-            self.pole_transform = rendering.Transform()
-            rod.add_attr(self.pole_transform)
-            self.viewer.add_geom(rod)
-            axle = rendering.make_circle(.05)
+            self.viewer.set_bounds(-2.4, 2.4, -2.4, 2.4)
+
+            blue_back = rendering.make_circle(2,res=100)
+            blue_back.set_color(24/255,60/255,94/255) #blue
+            self.viewer.add_geom(blue_back)
+
+            disk = rendering.make_circle(0.65,res=100)
+            disk_mini = rendering.make_circle(0.06,res=30)
+            disk.set_color(161/255,143/255,117/255) #grey
+            disk_mini.set_color(68/255,59/255,42/255)
+            self.disk_transform = rendering.Transform()
+            disk.add_attr(self.disk_transform)
+            disk_mini.add_attr(self.disk_transform)
+            self.viewer.add_geom(disk)
+            self.viewer.add_geom(disk_mini)
+            # self.disk_transform.set_translation(0,1.2)
+
+            axle = rendering.make_circle(.1)
             axle.set_color(0, 0, 0)
             self.viewer.add_geom(axle)
+
             fname = path.join(path.dirname(__file__), "clockwise.png")
             self.img = rendering.Image(fname, 1., 1.)
             self.imgtrans = rendering.Transform()
             self.img.add_attr(self.imgtrans)
 
         self.viewer.add_onetime(self.img)
-        self.pole_transform.set_rotation(- self.th - np.pi / 2)
         if self.u:
-            self.imgtrans.scale = (+self.u / 2, np.abs(self.u) / 2)
-        return self.viewer.render(return_rgb_array=mode == 'rgb_array')
+            self.imgtrans.scale = (+self.u/self.umax, np.abs(self.u/self.umax))
+        self.disk_transform.set_rotation(-self.th-np.pi/2)
+        self.disk_transform.set_translation(-self.r*np.sin(self.th), -self.r*np.cos(self.th))
+        self.viewer.render(return_rgb_array='human' == 'rgb_array')
 
     def close(self):
         if self.viewer:
@@ -111,3 +126,18 @@ class UnbalancedDisk_sincos(UnbalancedDisk):
         self.th_noise = self.th + np.random.normal(loc=0,scale=0.001) #do not edit
         self.omega_noise = self.omega + np.random.normal(loc=0,scale=0.001) #do not edit
         return np.array([np.sin(self.th_noise), np.cos(self.th_noise), self.omega_noise]) #change anything here
+
+if __name__ == '__main__':
+    import time
+    env = UnbalancedDisk()
+
+    obs = env.reset()
+    env.render()
+    try:
+        for i in range(100):
+            time.sleep(1/24)
+            env.step(env.action_space.sample())
+            env.render()
+    finally:
+        env.close()
+
