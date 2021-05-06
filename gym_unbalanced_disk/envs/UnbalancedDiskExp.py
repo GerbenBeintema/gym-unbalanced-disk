@@ -20,7 +20,7 @@ class UnbalancedDisk_exp(gym.Env):
                   np.pi = starting location
 
     '''
-    def __init__(self, umax=4., dt=0.025, force_restart_matlab_eng=False):
+    def __init__(self, umax=3., dt=0.025, force_restart_matlab_eng=False):
         global eng, eng_active
         self.connected = False
         if eng_active:
@@ -198,7 +198,7 @@ class UnbalancedDisk_exp(gym.Env):
 
 class UnbalancedDisk_exp_sincos(UnbalancedDisk_exp):
     """docstring for UnbalancedDisk_exp_sincos"""
-    def __init__(self, umax=4, dt = 0.025):
+    def __init__(self, umax=3., dt = 0.025):
         super(UnbalancedDisk_exp_sincos, self).__init__(umax=umax, dt=dt)
         low = [-1,-1,-40.] 
         high = [1,1,40.]

@@ -15,7 +15,7 @@ class UnbalancedDisk(gym.Env):
                     |
                     0  = starting location
     '''
-    def __init__(self, umax=4., dt = 0.025):
+    def __init__(self, umax=3., dt = 0.025):
         ############# start do not edit  ################
         self.g = 9.80155078791343
         self.J = 0.000244210523960356
@@ -57,7 +57,7 @@ class UnbalancedDisk(gym.Env):
 
         reward = self.reward_fun(self)
         return self.get_obs(), reward, False, {}
-        
+         
     def reset(self,seed=None):
         self.th = np.random.normal(loc=0,scale=0.001)
         self.omega = np.random.normal(loc=0,scale=0.001)
@@ -116,7 +116,7 @@ class UnbalancedDisk(gym.Env):
 
 class UnbalancedDisk_sincos(UnbalancedDisk):
     """docstring for UnbalancedDisk_sincos"""
-    def __init__(self, umax=4., dt = 0.025):
+    def __init__(self, umax=3., dt = 0.025):
         super(UnbalancedDisk_sincos, self).__init__(umax=umax, dt=dt)
         low = [-1,-1,-40.] 
         high = [1,1,40.]
