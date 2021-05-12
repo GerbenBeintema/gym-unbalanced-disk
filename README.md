@@ -29,6 +29,8 @@ To use the experimental setup you will need to do the following things.
 1. Install the usb drivers using the instructions in `WindowsDcscUSB/`. 
 2. Install MATLAB python engine. [See matlabworks](https://nl.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
 
+If you installed python through anaconda, look for anaconda prompt in the start menu and run it in administrator mode to install the Matlab python engine.
+
 ## Basic use of simulation
 
 ```
