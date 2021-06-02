@@ -36,7 +36,7 @@ class UnbalancedDisk(gym.Env):
         high = [float('inf'),40]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(2,))
 
-        self.reward_fun = lambda self: np.exp(-((self.th+np.pi)%(2*np.pi)-np.pi)**2/(2*(np.pi/7)**2)) #example reward function, change this!
+        self.reward_fun = lambda self: np.exp(-(self.th%(2*np.pi)-np.pi)**2/(2*(np.pi/7)**2)) #example reward function, change this!
         
         self.viewer = None
         self.u = 0 #for visual
