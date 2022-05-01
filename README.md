@@ -6,21 +6,32 @@ This is the gym python environment for the unbalanced disk as seen below
 
 This includes both a simulated and an experimental setup. 
 
-## Installation simulation
+# Simulator
+
+## Installation python Simulator
 
 Use command prompt or equivalent and enter
 
 ```
-python -m pip install git+git://github.com/GerbenBeintema/gym-unbalanced-disk@master
+python -m pip install git+https://github.com/GerbenBeintema/gym-unbalanced-disk@master
 ```
 
 or download the repository and install using
 
 ```
-git clone git@github.com:upb-lea/gym-unbalanced-disk.git #(or use manual download on the github page)
+git clone https://github.com/GerbenBeintema/gym-unbalanced-disk.git #(or use manual download on the github page)
 cd gym-unbalanced-disk
 pip install -e .
 ```
+
+## Installation MATLAB Simulator
+
+Download the `matlab-simulator` files and either use the function or the Simulink files. 
+
+# Connecting to the experimental setup
+
+1. Install the usb drivers using the instructions in `WindowsDcscUSB/`. 
+
 
 ## Additional Experimental setup install
 

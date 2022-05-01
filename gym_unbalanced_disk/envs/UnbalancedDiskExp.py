@@ -146,46 +146,85 @@ class UnbalancedDisk_exp(gym.Env):
         return [self.th, self.omega]
 
     def render(self, mode='human'):
+        try:
+            import pygame
+            from pygame import gfxdraw
+        except ImportError:
+            raise DependencyNotInstalled(
+                "pygame is not installed, run `pip install gym[classic_control]`"
+            )
+        
+        screen_width = 500
+        screen_height = 500
+
+        th = -self.th
+        omega = self.omega #x = self.state
+
         if self.viewer is None:
-            from gym.envs.classic_control import rendering
-            self.r = 1.25
+            pygame.init()
+            pygame.display.init()
+            self.viewer = pygame.display.set_mode((screen_width, screen_height))
 
-            self.viewer = rendering.Viewer(500, 500)
-            self.viewer.set_bounds(-2.4, 2.4, -2.4, 2.4)
-
-            blue_back = rendering.make_circle(2,res=100)
-            blue_back.set_color(24/255,60/255,94/255) #blue
-            self.viewer.add_geom(blue_back)
-
-            disk = rendering.make_circle(0.65,res=100)
-            disk_mini = rendering.make_circle(0.06,res=30)
-            disk.set_color(161/255,143/255,117/255) #grey
-            disk_mini.set_color(68/255,59/255,42/255)
-            self.disk_transform = rendering.Transform()
-            disk.add_attr(self.disk_transform)
-            disk_mini.add_attr(self.disk_transform)
-            self.viewer.add_geom(disk)
-            self.viewer.add_geom(disk_mini)
-
-            axle = rendering.make_circle(.1)
-            axle.set_color(0, 0, 0)
-            self.viewer.add_geom(axle)
-
-            fname = path.join(path.dirname(__file__), "clockwise.png")
-            self.img = rendering.Image(fname, 1., 1.)
-            self.imgtrans = rendering.Transform()
-            self.img.add_attr(self.imgtrans)
-
-        self.viewer.add_onetime(self.img)
+        self.surf = pygame.Surface((screen_width, screen_height))
+        self.surf.fill((255, 255, 255))
+        
+        gfxdraw.filled_circle( #central blue disk
+            self.surf,
+            screen_width//2,
+            screen_height//2,
+            int(screen_width/2*0.65*1.3),
+            (32,60,92),
+        )
+        gfxdraw.filled_circle( #small midle disk
+            self.surf,
+            screen_width//2,
+            screen_height//2,
+            int(screen_width/2*0.06*1.3),
+            (132,132,126),
+        )
+        
+        from math import cos, sin
+        r = screen_width//2*0.40*1.3
+        gfxdraw.filled_circle( #disk
+            self.surf,
+            int(screen_width//2-sin(th)*r), #is direction correct?
+            int(screen_height//2-cos(th)*r),
+            int(screen_width/2*0.22*1.3),
+            (155,140,108),
+        )
+        gfxdraw.filled_circle( #small nut
+            self.surf,
+            int(screen_width//2-sin(th)*r), #is direction correct?
+            int(screen_height//2-cos(th)*r),
+            int(screen_width/2*0.22/8*1.3),
+            (71,63,48),
+        )
+        
+        self.arrow = pygame.image.load('./clockwise.png')
         if self.u:
-            self.imgtrans.scale = (+self.u/self.umax, np.abs(self.u/self.umax))
-        self.disk_transform.set_rotation(-self.th-np.pi/2)
-        self.disk_transform.set_translation(-self.r*np.sin(self.th), -self.r*np.cos(self.th))
-        self.viewer.render(return_rgb_array='human' == 'rgb_array')
+            arrow_size = abs(self.u/self.umax*screen_height)*0.25
+            Z = (arrow_size, arrow_size)
+            arrow_rot = pygame.transform.scale(self.arrow,Z)
+            if self.u>0:
+                arrow_rot = pygame.transform.flip(arrow_rot, True, False)
+                
+        self.surf = pygame.transform.flip(self.surf, False, True)
+        self.viewer.blit(self.surf, (0, 0))
+        if self.u:
+            self.viewer.blit(arrow_rot, (screen_width//2-arrow_size//2, screen_height//2-arrow_size//2))
+        if mode == "human":
+            pygame.event.pump()
+            pygame.display.flip()
+
+        return True
 
     def close_viewer(self):
-        if self.viewer:
-            self.viewer.close()
+        if self.viewer is not None:
+            import pygame
+
+            pygame.display.quit()
+            pygame.quit()
+            self.isopen = False
             self.viewer = None
 
     def close(self):
