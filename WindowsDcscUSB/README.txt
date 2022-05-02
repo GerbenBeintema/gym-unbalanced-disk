@@ -4,8 +4,11 @@ The DcscUSB driver is necessary to connect FPGA based laboratory setups designed
 by DCSC technical staff to a PC. Currently the driver supports the 64 bits versions of
 Windows 7, 8.1 and 10 (32 bits should work too but is untested).
 
-Installation for Windows 10:
------------------------------
+To be able to install this driver you need to allow for the installation 
+of the unsigned driver in the following steps.
+
+Installation for Windows 10/11:
+-------------------------------
 
 A disable driver signature enforcement:
 1) Connect a FPGA based setup, the driver installation will silently fail.

@@ -4,13 +4,15 @@ This is the gym python environment for the unbalanced disk as seen below
 
 ![Setup](UnbalancedDisc1.jpg)
 
-This includes both a simulated and an experimental setup. 
+This includes both a **simulator** and an instruction and scripts to connect to the **experimental setup**. 
+
+Note that the simulator is accurate model of the experimental setup for the provided model parameters. 
 
 # Simulator
 
 ## Installation python Simulator
 
-Use command prompt or equivalent and enter
+Use any terminal or equivalent and enter
 
 ```
 python -m pip install git+https://github.com/GerbenBeintema/gym-unbalanced-disk@master
@@ -24,31 +26,13 @@ cd gym-unbalanced-disk
 pip install -e .
 ```
 
-## Installation MATLAB Simulator
-
-Download the `matlab-simulator` files and either use the function or the Simulink files. 
-
-# Connecting to the experimental setup
-
-1. Install the usb drivers using the instructions in `WindowsDcscUSB/`. 
-
-
-## Additional Experimental setup install
-
-To use the experimental setup you will need to do the following things.
-
-1. Install the usb drivers using the instructions in `WindowsDcscUSB/`. 
-2. Install MATLAB python engine. [See matlabworks](https://nl.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
-
-If you installed python through anaconda, look for anaconda prompt in the start menu and run it in administrator mode to install the Matlab python engine.
-
-## Basic use of simulation
+### Basic use of python simulator
 
 ```
 import gym, gym_unbalanced_disk, time
 
 env = gym.make('unbalanced-disk-v0', dt=0.025, umax=4.) 
-#or use gym_unbalanced_disk.UnbalancedDisk(dt=0.025, umax=4.)
+#env = gym_unbalanced_disk.UnbalancedDisk(dt=0.025, umax=4.) #alternative
 
 obs = env.reset()
 try:
@@ -62,6 +46,23 @@ try:
 finally: #this will always run
     env.close()
 ```
+
+## Installation MATLAB Simulator
+
+Download the `matlab-simulator` files and either use the function or the Simulink files. 
+
+# Experimental Setup
+
+## Requirements to be able to connect to the experimental setup
+
+To use the experimental setup you will need to do the following things.
+
+1. Install the USB drivers using the instructions in `WindowsDcscUSB/README.txt`. 
+2. Install MATLAB python engine. [See matlabworks](https://nl.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
+  * To reduce errors launch the "anaconda PowerShell prompt" with "run as admin" by right-clicking executable. 
+  * Navigate to the MATLAB engine folder (e.g. `cd "C:\Program Files\MATLAB\R2021a\extern\engines\python"`) 
+  * Use `python setup.py install`
+  * Be sure that your python is compatible with you MATLAB version, [Table of compatible version](https://www.mathworks.com/content/dam/mathworks/mathworks-dot-com/support/sysreq/files/python-compatibility.pdf)
 
 ## Environments
 
