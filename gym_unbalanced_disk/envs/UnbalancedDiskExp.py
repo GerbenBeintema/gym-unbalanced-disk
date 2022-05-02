@@ -201,7 +201,7 @@ class UnbalancedDisk_exp(gym.Env):
             arrow_size = abs(self.u/self.umax*screen_height)*0.25
             Z = (arrow_size, arrow_size)
             arrow_rot = pygame.transform.scale(self.arrow,Z)
-            if self.u>0:
+            if self.u<0:
                 arrow_rot = pygame.transform.flip(arrow_rot, True, False)
                 
         self.surf = pygame.transform.flip(self.surf, False, True)
