@@ -126,7 +126,6 @@ class UnbalancedDisk(gym.Env):
         
         fname = path.join(path.dirname(__file__), "clockwise.png")
         self.arrow = pygame.image.load(fname)
-        
         if self.u:
             arrow_size = abs(self.u/self.umax*screen_height)*0.25
             Z = (arrow_size, arrow_size)
