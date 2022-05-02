@@ -70,18 +70,13 @@ class UnbalancedDisk(gym.Env):
         return [self.th_noise, self.omega_noise]
 
     def render(self, mode='human'):
-        try:
-            import pygame
-            from pygame import gfxdraw
-        except ImportError:
-            raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gym[classic_control]`"
-            )
+        import pygame
+        from pygame import gfxdraw
         
         screen_width = 500
         screen_height = 500
 
-        th = -self.th
+        th = self.th
         omega = self.omega #x = self.state
 
         if self.viewer is None:

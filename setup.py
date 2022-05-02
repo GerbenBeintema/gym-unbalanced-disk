@@ -5,7 +5,7 @@ packages = [a for a in find_namespace_packages(where='.') if a.find('gym_unbalan
 
 setuptools.setup(
       name='gym_unbalanced_disk',
-      version='0.3.1',
+      version='0.3.2',
       description='An OpenAI gym environment for unbalanced disk.',
       url="https://github.com/GerbenBeintema/gym-unbalanced-disk",
       author = 'Gerben Beintema',
