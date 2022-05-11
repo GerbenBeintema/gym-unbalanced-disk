@@ -8,6 +8,10 @@ This includes both a **simulator** and an instruction and scripts to connect to 
 
 Note that the simulator is accurate model of the experimental setup for the provided model parameters. 
 
+# Provided data
+
+In `provided-measurement-datasets/` you can find two datasets which you can use for fitting and evaluating your models. However, for the design assignment we prefer (but not required) that you make you own measurements and that you motivate your experiment design choices in the report. 
+
 # Simulator
 
 ## Installation python Simulator
