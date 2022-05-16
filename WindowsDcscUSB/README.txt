@@ -20,14 +20,15 @@ A disable driver signature enforcement:
 7) Click on Advanced options.
 8) Click on Startup Settings. (You might need to select "more options")
 9) Click on Restart.
-10) Wait while the PC restarts and then press key 7.
-11) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
-12) Open the Start Menu, type "device manager" and start it.
-13) Right-click on the name of the setup (sometimes just called Unknown device) 
+10) Wait while the PC restarts and gets to the Startup settings page. (don't press anything for this step)
+11) Then press key 7 to select "7) Disable driver signature enforcement".
+12) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
+13) Open the Start Menu, type "device manager" and start it.
+14) Right-click on the name of the setup (sometimes just called Unknown device) 
     under "Other devices" and select Update driver software....
-14) Choose to Browse for driver software on your computer and point it to the Win10 
+15) Choose to Browse for driver software on your computer and point it to the Win10 
     sub-directory in the directory from step 11.
-15) Allow the installation of the unsigned driver. If the installation fails because 
+16) Allow the installation of the unsigned driver. If the installation fails because 
     a hash is missing, driver signature enforcment is still/again on. Retry the 
     procedure from step 1. If the installation fails again, seek help.
 
@@ -46,14 +47,15 @@ Note: If driver signature enforcement is already disabled, start with step 12.
 8) Click on Advanced options,
 9) Click on Start-up Settings
 10) Click on Restart
-11) Wait while the PC restarts and then press key 7.
-12) Login again and unpack the zip file in a directory.
-13) Open the charms menu, search for "device manager" and start it.
-14) Right-click on the name of the setup (sometimes just called Unknown device) under 
+11) Wait while the PC restarts and gets to the Startup settings page. (don't press anything for this step)
+12) Then press key 7 to select "7) Disable driver signature enforcement".
+13) Login again and unpack the zip file in a directory.
+14) Open the charms menu, search for "device manager" and start it.
+15) Right-click on the name of the setup (sometimes just called Unknown device) under 
     Other devices and select Update driver software....
-15) Choose Browse for driver software on your computer and point it to the Win81 subdirectory
+16) Choose Browse for driver software on your computer and point it to the Win81 subdirectory
     from in the directory from step 12.
-16) Allow the installation of the unsigned driver. If the installation fails because a
+17) Allow the installation of the unsigned driver. If the installation fails because a
     hash is missing, driver signature enforcment is still/again on. Retry the procedure
     from step 1. If the installation fails again, seek help.
 

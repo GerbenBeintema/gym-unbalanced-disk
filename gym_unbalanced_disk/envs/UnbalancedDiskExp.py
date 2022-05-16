@@ -100,7 +100,7 @@ class UnbalancedDisk_exp(gym.Env):
         eng.fugiboard('Write',self.H,0.,1.,float(self.u),0.)
 
         time.sleep(self.dt)
-
+        
         obs = self.get_obs()
         reward = self.reward_fun(self)
         return obs, reward, False, {}
