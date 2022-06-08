@@ -122,7 +122,16 @@ class UnbalancedDisk(gym.Env):
         fname = path.join(path.dirname(__file__), "clockwise.png")
         self.arrow = pygame.image.load(fname)
         if self.u:
-            arrow_size = abs(self.u/self.umax*screen_height)*0.25
+            if isinstance(self.u, (np.ndarray,list)):
+                if self.u.ndim==1:
+                    u = self.u[0]
+                elif self.u.ndim==0:
+                    u = self.u
+                else:
+                    raise ValueError(f'u={u} is not the correct shape')
+            else:
+                u = self.u
+            arrow_size = abs(float(u)/self.umax*screen_height)*0.25
             Z = (arrow_size, arrow_size)
             arrow_rot = pygame.transform.scale(self.arrow,Z)
             if self.u<0:
@@ -170,7 +179,8 @@ if __name__ == '__main__':
     try:
         for i in range(100):
             time.sleep(1/24)
-            env.step(env.action_space.sample())
+            u = env.action_space.sample()
+            env.step(u)
             env.render()
     finally:
         env.close()
