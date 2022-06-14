@@ -30,7 +30,7 @@ class UnbalancedDisk(gym.Env):
  
 
         # change anything here (compilable with the exercise instructions)
-        self.action_space = spaces.Box(low=-umax,high=umax,shape=tuple()) #continues
+        self.action_space = spaces.Box(low=-umax,high=umax,shape=tuple()) #continuous
         # self.action_space = spaces.Discrete(2) #discrete
         low = [-float('inf'),-40] 
         high = [float('inf'),40]
@@ -44,7 +44,7 @@ class UnbalancedDisk(gym.Env):
 
     def step(self, action):
         #convert action to u
-        self.u = action #continues
+        self.u = action #continuous
         # self.u = [-3,-1,0,1,3][action] #discrate
         # self.u = [-3,3][action] #discrate
 

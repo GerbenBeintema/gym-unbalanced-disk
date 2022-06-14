@@ -13,11 +13,11 @@ class UnbalancedDisk_exp(gym.Env):
     '''
     UnbalancedDisk_exp
     th =            
-                    0
+                  +-pi
                     |
-           np.pi/2-----np.pi*3/2
+           pi/2   ----- -pi/2
                     |
-                  np.pi = starting location
+                    0  = starting location
 
     '''
     def __init__(self, umax=3., dt=0.025, force_restart_matlab_eng=False):
@@ -32,7 +32,7 @@ class UnbalancedDisk_exp(gym.Env):
         self.dt = dt
  
         ### Gym things
-        self.action_space = spaces.Box(low=-umax,high=umax,shape=tuple()) #continues
+        self.action_space = spaces.Box(low=-umax,high=umax,shape=tuple()) # continuous
         low = [-float('inf'),-30.]
         high = [float('inf'),30.]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(2,))
@@ -198,7 +198,16 @@ class UnbalancedDisk_exp(gym.Env):
         fname = path.join(path.dirname(__file__), "clockwise.png")
         self.arrow = pygame.image.load(fname)
         if self.u:
-            arrow_size = abs(self.u/self.umax*screen_height)*0.25
+            if isinstance(self.u, (np.ndarray,list)):
+                if self.u.ndim==1:
+                    u = self.u[0]
+                elif self.u.ndim==0:
+                    u = self.u
+                else:
+                    raise ValueError(f'u={u} is not the correct shape')
+            else:
+                u = self.u
+            arrow_size = abs(float(u)/self.umax*screen_height)*0.25
             Z = (arrow_size, arrow_size)
             arrow_rot = pygame.transform.scale(self.arrow,Z)
             if self.u<0:
