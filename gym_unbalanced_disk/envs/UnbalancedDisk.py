@@ -67,7 +67,7 @@ class UnbalancedDisk(gym.Env):
     def get_obs(self):
         self.th_noise = self.th + np.random.normal(loc=0,scale=0.001) #do not edit
         self.omega_noise = self.omega + np.random.normal(loc=0,scale=0.001) #do not edit
-        return [self.th_noise, self.omega_noise]
+        return np.array([self.th_noise, self.omega_noise])
 
     def render(self, mode='human'):
         import pygame

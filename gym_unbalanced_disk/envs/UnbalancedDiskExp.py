@@ -143,7 +143,7 @@ class UnbalancedDisk_exp(gym.Env):
         self.th = self.obs_raw[2]
         #obs[3]: 3 omega
         self.omega = self.obs_raw[3]
-        return [self.th, self.omega]
+        return np.array([self.th, self.omega])
 
     def render(self, mode='human'):
         import pygame
