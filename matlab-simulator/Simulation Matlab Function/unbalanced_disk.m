@@ -1,8 +1,9 @@
 %% unballanced disk: function description
 function [new_state] = unbalanced_disk(state, u, dt)
 
-    u = min(max(u,-3),3);
+    
     %%############# start do not edit  ################
+    u = min(max(u,-3),3);
     g = 9.80155078791343;
     J = 0.000244210523960356;
     Km = 10.5081817407479;

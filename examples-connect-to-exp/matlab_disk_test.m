@@ -2,18 +2,23 @@ clear; close all; clc;
 load_api;
 
 %% Constants and definitions
-Ts = 5e-3;                                      % Sample Time
+Ts = 0.025;                                     % Sample Time
 Tf = 10;                                        % Experiment duration [s]
 N = Tf/Ts;                                      % Experiment length (number of samples)
-ua = 0;                                         % Initial control signal
-umax = 10;                                      % Max voltage
+umax = 3;                                       % Max voltage
 t = (0:Ts:Ts*(N-1))';
 
-%% Generate control input
-u = 20*rand(N,1)-10;
-u = filter([0 0.1],[1 -0.9],u);                 % Filtered random input for testing purposes
-u(u>umax) = umax;                               % Cap voltage to max
-u(u<-umax) = -umax; 
+%% Generate control input, feel free to change anything here
+u = 2*rand(N,1)-1;
+u = filter([0 0.1],[1 -0.9],u);                 % Filtered random input
+u_filt_amp = max(-min(u),max(u));               % Compute amplitude of the input signal
+u = (u./u_filt_amp)*umax*2.0;                   % Rescale u accordinglly
+% plot(t,u)
+
+% Keep this part the same to ensure that the input signal does not exceed umax
+u(u>umax) = umax;                               % Clip input signal
+u(-umax>u) = -umax;
+% plot(t,u)
 
 %% History variables
 data = zeros(9,length(t));
