@@ -17,12 +17,19 @@ class UnbalancedDisk(gym.Env):
     '''
     def __init__(self, umax=3., dt = 0.025):
         ############# start do not edit  ################
-        self.g = 9.80155078791343
-        self.J = 0.000244210523960356
-        self.Km = 10.5081817407479
-        self.I = 0.0410772235841364
-        self.M = 0.0761844495320390
-        self.tau = 0.397973147009910
+        self.omega0 = 11.339846957335382
+        self.delta_th = 0
+        self.gamma = 1.3328339309394384
+        self.Ku = 28.136158407237073
+        self.Fc = 6.062729509386865
+        self.coulomb_omega = 0.001
+
+        # self.g = 9.80155078791343
+        # self.J = 0.000244210523960356
+        # self.Km = 10.5081817407479
+        # self.I = 0.0410772235841364
+        # self.M = 0.0761844495320390
+        # self.tau = 0.397973147009910
         ############# end do not edit ###################
 
         self.umax = umax
@@ -50,7 +57,12 @@ class UnbalancedDisk(gym.Env):
 
         ##### Start Do not edit ######
         self.u = np.clip(self.u,-self.umax,self.umax)
-        f = lambda t,y: [y[1], -self.M*self.g*self.I/self.J*np.sin(y[0]) - 1/self.tau*y[1] + self.Km/self.tau*self.u]
+        def f(t,y):
+            th, omega = y
+            dthdt = omega
+            friction = self.gamma*omega + self.Fc*np.tanh(omega/self.coulomb_omega)
+            domegadt = -self.omega0**2*np.sin(th+self.delta_th) - friction + self.Ku*self.u
+            return np.array([dthdt, domegadt])
         sol = solve_ivp(f,[0,self.dt],[self.th,self.omega]) #integration
         self.th, self.omega = sol.y[:,-1]
         ##### End do not edit   #####
