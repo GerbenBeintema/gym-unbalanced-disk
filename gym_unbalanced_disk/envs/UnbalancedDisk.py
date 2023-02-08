@@ -38,7 +38,7 @@ class UnbalancedDisk(gym.Env):
 
         # change anything here (compilable with the exercise instructions)
         self.action_space = spaces.Box(low=-umax,high=umax,shape=tuple()) #continuous
-        # self.action_space = spaces.Discrete(2) #discrete
+        # self.action_space = spaces.Discrete(5) #discrete
         low = [-float('inf'),-40] 
         high = [float('inf'),40]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(2,))
@@ -184,16 +184,25 @@ class UnbalancedDisk_sincos(UnbalancedDisk):
 
 if __name__ == '__main__':
     import time
-    env = UnbalancedDisk()
+    env = UnbalancedDisk(dt=0.025)
 
     obs = env.reset()
+    Y = [obs]
     env.render()
     try:
         for i in range(100):
             time.sleep(1/24)
-            u = env.action_space.sample()
-            env.step(u)
+            u = 3#env.action_space.sample()
+            obs, reward, done, info = env.step(u)
+            Y.append(obs)
             env.render()
     finally:
         env.close()
+    from matplotlib import pyplot as plt
+    import numpy as np
+    Y = np.array(Y)
+    plt.plot(Y[:,0])
+    plt.title(f'max(Y[:,0])={max(Y[:,0])}')
+    plt.show()
+    
 
