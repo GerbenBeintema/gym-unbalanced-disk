@@ -82,7 +82,7 @@ To use the experimental setup with the python environment you will need to follo
 Now use the following to create an environment with a connection to the system
 
 ```python
-env = gym.make('unbalanced-disk-exp-v0', dt=0.025, umax=3.) #both are equivilent
+env = gym.make('unbalanced-disk-exp-v0', dt=0.025, umax=3.) #both are equivilent (this one has a time limit build in)
 env = gym_unbalanced_disk.UnbalancedDisk(dt=0.025, umax=3.) #both are equivilent
 ```
 

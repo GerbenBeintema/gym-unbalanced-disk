@@ -13,6 +13,6 @@ setuptools.setup(
       license = 'BSD 3-Clause License',
       python_requires = '>=3.6',
       packages=packages,
-      install_requires = ['gym','numpy','scipy', 'pygame'],
+      install_requires = ['gym==0.21','numpy','scipy', 'pygame'],
       include_package_data=True
       )
