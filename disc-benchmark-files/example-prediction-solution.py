@@ -4,10 +4,11 @@ out = np.load('training-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
 u_train = out['u'] #u[0],u[1],u[2],u[3],...
 
-data = np.loadtxt('test-prediction-submission-file.csv',delimiter=',')
-upast_test = data[:,:15] #N by u[k-15],u[k-14],...,u[k-1]
-thpast_test = data[:,15:30] #N by y[k-15],y[k-14],...,y[k-1]
-thpred = data[:,30] #all zeros
+# data = np.load('test-prediction-submission-file.npz')
+data = np.load('test-prediction-submission-file.npz')
+upast_test = data['upast'] #N by u[k-15],u[k-14],...,u[k-1]
+thpast_test = data['thpast'] #N by y[k-15],y[k-14],...,y[k-1]
+# thpred = data['thnow'] #all zeros
 
 
 def create_IO_data(u,y,na,nb):
@@ -36,13 +37,6 @@ print('NRMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5/Ytrain.std()*100,'%')
 Xtest = np.concatenate([upast_test[:,15-nb:], thpast_test[:,15-na:]],axis=1)
 
 Ypredict = reg.predict(Xtest)
+assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
 
-#put solution in the array:
-data[:,-1] = Ypredict
-
-data = np.loadtxt('test-prediction-submission-file.csv',delimiter=',')
-
-#copy header:
-with open('test-prediction-submission-file.csv') as f:
-    header = f.readline()[2:-1]
-np.savetxt('test-prediction-submission-file-2.csv', data, header=header, delimiter=',')
+np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)

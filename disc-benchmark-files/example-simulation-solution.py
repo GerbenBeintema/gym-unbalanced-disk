@@ -4,9 +4,9 @@ out = np.load('training-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
 u_train = out['u'] #u[0],u[1],u[2],u[3],...
 
-data = np.loadtxt('test-simulation-submission-file.csv',delimiter=',')
-u_test = data[:,0]
-th_test = data[:,1] #only the first 50 values are filled the rest are zeros
+data = np.load('test-simulation-submission-file.npz')
+u_test = data['u']
+th_test = data['th'] #only the first 50 values are filled the rest are zeros
 
 def create_IO_data(u,y,na,nb):
     X = []
@@ -16,8 +16,8 @@ def create_IO_data(u,y,na,nb):
         Y.append(y[k])
     return np.array(X), np.array(Y)
 
-na = 3
-nb = 5
+na = 2
+nb = 20
 Xtrain, Ytrain = create_IO_data(u_train, th_train, na, nb)
 
 from sklearn import linear_model
@@ -33,7 +33,7 @@ print('NRMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5/Ytrain.std()*100,'%')
 
 def simulation_IO_model(f, ulist, ylist, skip=50):
 
-    upast = ulist[skip-na:skip].tolist()
+    upast = ulist[skip-na:skip].tolist() #good initialization
     ypast = ylist[skip-nb:skip].tolist()
     Y = ylist[:skip].tolist()
     for u in ulist[skip:]:
@@ -57,7 +57,5 @@ print('NRMS:', np.mean((th_train_sim[skip:]-th_train[skip:])**2)**0.5/th_train.s
 skip = 50
 th_test_sim = simulation_IO_model(lambda x: reg.predict(x[None,:])[0], u_test, th_test, skip=skip)
 
-#copy header:
-with open('test-simulation-submission-file.csv') as f:
-    header = f.readline()[2:-1]
-np.savetxt('test-simulation-submission-file-2.csv', np.array([u_test,th_test_sim]).T, header=header, delimiter=',')
+assert len(th_test_sim)==len(th_test)
+np.savez('test-simulation-example-submission-file.npz', th=th_test_sim, u=u_test)
