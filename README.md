@@ -13,7 +13,14 @@ Note that the simulator is accurate model of the experimental setup for the prov
 
 ## 1. benchmark datasets used for identification tasks.
 
-In `provided-measurement-datasets/` you can find two datasets which you can use for fitting and evaluating your models. However, for the design assignment we prefer (but not required) that you make you own measurements and that you motivate your experiment design choices in the report. 
+In `disc-benchmark-files/` you can find 
+
+* `training-data.[csv,mat,npz]` which contains the training data for your system identification task
+* `test-prediction-submission-file.[csv,mat,npz]` the file format that we expect for the prediction task. 
+* `test-simulation-submission-file.[csv,mat,npz]` the file format that we expect for the simulation task. 
+* `example-prediction-solution.py` an example file which shows a simple linear ARX prediction solution using the datasets provided.
+* `example-simulation-solution.py` an example file which shows a simple linear ARX simulation solution using the datasets provided.
+* `submission-file-checker.py` is run as `python submission-file-checker.py submitted-file solution-file` to compute the prediction/simulation errors. You can also run this file to check if your file has the appropriate format by running `python submission-file-checker.py submitted-file test-prediction-submission.npz` which successfully ends without an error if the submitted-file has the correct format.
 
 ## 2.1 Simulator python
 
