@@ -3,7 +3,7 @@ from pandas import read_csv
 
 class DATA():
     def __init__(self):
-        self._get_directory()
+        self._get_data()
 
         self.train = read_csv(self.trainfilepath)
         self.testsub = read_csv(self.testsubfilepath)
@@ -18,9 +18,8 @@ class DATA():
     def get_testsim(self):
         return self.testsim    
 
-    def _get_directory(self):
-        MAIN_DIR = getcwd()
-        DATA_DIR = path.join(MAIN_DIR,'disc-benchmark-files\\')
+    def _get_data(self):
+        DATA_DIR = path.join(getcwd(),'disc-benchmark-files\\')
     
         self.trainfilepath   = path.join(DATA_DIR,'training-data.csv')
         self.testsubfilepath = path.join(DATA_DIR,'test-prediction-submission-file.csv')
