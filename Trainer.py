@@ -17,12 +17,14 @@ class Trainer:
         print(f"The device that will be used in training is {get_device_name(self.device)}")
 
         self.model = model.to(self.device)
+        self.model_name = model.name
 
         self.optimizer = Adam(self.model.parameters(), lr=0.001)
         self.criterion = MSELoss()
 
         assert self.criterion is not None, "Please define a loss function"
         assert self.optimizer is not None, "Please define an optimizer"
+        assert self.model_name is not None, "Please define a model name"
 
         self.train = dl_train
         self.val = dl_val
@@ -123,9 +125,9 @@ class Trainer:
         }
     
     
-    def save_model(self, model_name:str, DIR:str=getcwd()):
+    def save_model(self, DIR:str=getcwd()):
         """Save the model"""
-        store_path = join(DIR, model_name)
+        store_path = join(DIR, self.model_name)
         
         save(self.model.state_dict(), store_path)
 
@@ -148,8 +150,8 @@ class Trainer:
             metrics_val = self.val_epoch(dl_val)
             df_val = df_val.append(DataFrame({'epoch': [epoch], **metrics_val}), ignore_index=True)
 
-        df_train.to_csv('savefolderpytorch\\train.csv')
-        df_val.to_csv('savefolderpytorch\\val.csv')
+        df_train.to_csv(f'savefolderpytorch\\train_{self.model_name}.csv')
+        df_val.to_csv(f'savefolderpytorch\\val_{self.model_name}.csv')
         # Return a dataframe that logs the training process. This can be exported to a CSV or plotted directly.
     
     def load_model(self, model_name:str, DIR:str=getcwd()):
