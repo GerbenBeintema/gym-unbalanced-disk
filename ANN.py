@@ -1,11 +1,12 @@
 from torch import nn
 
 class ANN(nn.Module):
-    def __init__(self, input_dim, output_dim):
+    """This module is setup as a NARX model"""
+    def __init__(self, out_features ,input_dim:int=30, output_dim:int=1):
         super().__init__()
-        self.fc1 = nn.Sequential(nn.Linear(30, 5),
+        self.fc1 = nn.Sequential(nn.Linear(input_dim, out_features),
                                 nn.LeakyReLU(),
-                                nn.Linear(5, output_dim),
+                                nn.Linear(out_features, output_dim),
         )
 
         self.name = 'ANN'
@@ -14,3 +15,7 @@ class ANN(nn.Module):
         x = self.fc1(x)
 
         return x
+
+class NARX(nn.Module):
+    def __init__(self, input_dim, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
