@@ -1,6 +1,31 @@
 from os import getcwd, path
-from pandas import read_csv, DataFrame
+from pandas import read_csv, DataFrame, Series
 from numpy import array, concatenate
+from torch.utils.data import Dataset, random_split
+
+class CustomDataset(Dataset):
+    def __init__(self, X, Y):
+        """Initilize the dataset
+        Parameters:
+            X: input data
+            Y: output data
+        Return:
+            None
+        """
+
+        self.X = X
+        self.Y = Y
+
+    def __len__(self):
+        return len(self.Y)
+    
+    def __getitem__(self, idx):
+        return self.X[idx], self.Y[idx]
+    
+    def split_data(self, split_ratio:list=[0.6,0.2,0.2]):
+        """Split the data into train and validation data"""
+        return random_split(self, split_ratio)
+        
 
 class DATA():
     def __init__(self, na:int=15, nb:int=15):
@@ -16,9 +41,9 @@ class DATA():
 
         self._get_data()
 
-        self.train = self._rename_df(read_csv(self.trainfilepath))
-        self.testsub = self._rename_df(read_csv(self.testsubfilepath))
-        self.testsim = read_csv(self.testsimfilepath)
+        self.train = self._rename_df1(read_csv(self.trainfilepath))
+        self.testsub = self._rename_df1(read_csv(self.testsubfilepath))
+        self.testsim = read_csv(self.testsimfilepath, delimiter=', ')
 
         self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
         #self.testsub_data = self.make_training_data(self.testsub.u, self.testsub.th, na, nb)
@@ -62,6 +87,14 @@ class DATA():
         """Rename the dataframe colums to something more callable"""
         return df.rename(columns={'# u':'u', ' th':'th'})
     
-    # def _rename_df2(self, df):
+    # def _rename_df2(self, df): # Does not work yet
     #     """Rename the dataframe colums to something more callable"""
-    #     return df.rename(columns=['# u[k-15]':'u[k-15]', ' u[k-14]':'u[k-14]', ' u[k-13]':'u[k-13]', ' u[k-12]':'u[k-12]', ' u[k-11]':'u[k-11]', ' u[k-10]':'u[k-10]',' u[k-9]':'u[k-9]', ' u[k-8]':'u[k-8]',' u[k-7]':'u[k-7]', ' u[k-6]':'u[k-6]', ' u[k-5]':'u[k-5]', ' u[k-4]':'u[k-4]',' u[k-3]':'u[k-3]', ' u[k-2]':'u[k-2]', ' u[k-1]':'u[k-1]','y[k-15]':'y[k-15]', ' y[k-14]':'y[k-14]', ' y[k-13]':'y[k-13]',' y[k-12]':'y[k-12]',' y[k-11]':'y[k-11]', ' y[k-10]':'y[k-10]', ' y[k-9]':'y[k-9]', ' y[k-8]':'y[k-8]', ' y[k-7]':'y[k-7]',' y[k-6]':'y[k-6]', ' y[k-5]':'y[k-5]', ' y[k-4]':'y[k-4]', ' y[k-3]':'y[k-3]', ' y[k-2]':'y[k-2]', ' y[k-1]':'y[k-1]',' y[k-0]':'y[k-0]'])
+    #     list_for_dict = {}
+    #     dict = {'u':'u','y':'y','[':'[',']':']','k':'k','-':'-','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','0':'0'}
+    #     for idx, key in enumerate(Series(self.testsub.keys())):
+    #         str = ''
+    #         for j in key:
+    #             if j in dict:
+    #                 str += dict[j]
+    #         list_for_dict[key] = str
+    #     return df.rename(columns=list_for_dict)
