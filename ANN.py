@@ -8,6 +8,7 @@ class ANN(nn.Module):
                                 nn.Linear(5, output_dim),
         )
 
+        self.name = 'ANN'
         
     def forward(self, x):
         x = self.fc1(x)
