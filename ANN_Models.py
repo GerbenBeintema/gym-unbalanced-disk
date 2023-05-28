@@ -1,4 +1,4 @@
-from torch import nn
+from torch import nn, zeros, stack, cat, float64
 
 class NonLinear(nn.Module):
     """Create A Non-Linear Model"""
@@ -33,3 +33,41 @@ class NARX(nn.Module):
         x = self.fc1(x)
 
         return x
+    
+class RNN(nn.Module):
+    """This module is setup as a RNN model"""
+    def __init__(self, input_size:int=1, hidden_size:int=40, output_size:int=1, nr_nodes:int=40):
+        super().__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.nr_nodes = nr_nodes
+        self.output_size = output_size
+
+        net = lambda n_in,n_out: nn.Sequential(nn.LazyLinear(n_in, self.nr_nodes),
+                                               nn.LeakyReLU(),
+                                               nn.Linear(self, self.nr_nodes, n_out)
+        )
+
+        # Initialize the network
+        self.H2H = net(self.input_size + self.hidden_size, self.hidden_size)
+        self.H2O = net(self.input_size + self.hidden_size, self.output_size)
+
+        self.name = f'RNN'
+        
+    def forward(self, inputs):
+        """forward pass of the RNN model"""
+
+        # Initialize hidden state
+        hidden = zeros(inputs.shape(0), self.hidden_size, dtype=float64)
+        outputs = []
+
+        for i in range(inputs.shape(1)):
+            # Set up data for this timestep
+            u = inputs[:, i]
+            combined = cat((u[:, None], hidden), dim=1)
+
+            # Update hidden state
+            hidden = self.H2H(combined)
+            outputs.append(self.H2O(combined)[:,0])
+
+        return stack(outputs, dim=1)
