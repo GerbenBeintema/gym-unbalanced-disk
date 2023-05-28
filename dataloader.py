@@ -2,6 +2,7 @@ from os import getcwd, path
 from pandas import read_csv, DataFrame, Series
 from numpy import array, concatenate
 from torch.utils.data import Dataset, random_split
+from torch import tensor, float64
 
 class CustomDataset(Dataset):
     def __init__(self, X, Y):
@@ -50,8 +51,9 @@ class DATA():
         if not UseOE:
             self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
         else:
-            self.Xtrain, self.Ytrain = self.make_OE_data(self.train.u, self.train.th, nf)
-            
+            convert = lambda x: [tensor(xi,dtype=float64) for xi in x]
+            self.Xtrain, self.Ytrain = convert(self.make_OE_data(self.train.u, self.train.th, nf))
+
         #self.testsub_data = self.make_training_data(self.testsub.u, self.testsub.th, na, nb)
 
 

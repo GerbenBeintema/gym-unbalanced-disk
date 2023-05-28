@@ -43,10 +43,10 @@ class RNN(nn.Module):
         self.nr_nodes = nr_nodes
         self.output_size = output_size
 
-        net = lambda n_in,n_out: nn.Sequential(nn.LazyLinear(n_in, self.nr_nodes),
+        net = lambda n_in,n_out: nn.Sequential(nn.Linear(n_in, self.nr_nodes),
                                                nn.LeakyReLU(),
-                                               nn.Linear(self, self.nr_nodes, n_out)
-        )
+                                               nn.Linear(self.nr_nodes, n_out)
+        ).double()
 
         # Initialize the network
         self.H2H = net(self.input_size + self.hidden_size, self.hidden_size)
@@ -58,10 +58,10 @@ class RNN(nn.Module):
         """forward pass of the RNN model"""
 
         # Initialize hidden state
-        hidden = zeros(inputs.shape(0), self.hidden_size, dtype=float64)
+        hidden = zeros(inputs.size(0), self.hidden_size, dtype=float64)
         outputs = []
 
-        for i in range(inputs.shape(1)):
+        for i in range(inputs.size(1)):
             # Set up data for this timestep
             u = inputs[:, i]
             combined = cat((u[:, None], hidden), dim=1)
