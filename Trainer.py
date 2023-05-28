@@ -12,7 +12,7 @@ from os import getcwd
 from tqdm import tqdm
 
 class Trainer:
-    def __init__(self, model:Module, dl_train:DataLoader, dl_val:DataLoader, dl_test:DataLoader):
+    def __init__(self, model:Module, dl_train:DataLoader, dl_val:DataLoader, dl_test:DataLoader, DIR:str):
         self.device = device("cuda" if is_available() else "cpu")
         print(f"The device that will be used in training is {get_device_name(self.device)}")
 
@@ -29,8 +29,14 @@ class Trainer:
         self.train = dl_train
         self.val = dl_val
         self.test = dl_test
+        self.DIR = DIR
 
     def train_epoch(self, dl:DataLoader):
+        """Train the model for one epoch
+        Parameters:
+            dl: dataloader
+        Returns:
+            epoch_metrics: dict"""
         # Put the model in training mode
         self.model.train().float()
 
@@ -80,6 +86,11 @@ class Trainer:
         return epoch_metrics
     
     def val_epoch(self, dl:DataLoader):
+        """Validate the model for one epoch
+        Parameters:
+            dl: dataloader
+        Returns:
+            epoch_metrics: dict"""
         # Put the model in evaluation mode
         self.model.eval().float()
 
@@ -123,15 +134,13 @@ class Trainer:
         return {
             "loss": [total_loss],
         }
-    
-    
-    def save_model(self, DIR:str=getcwd()):
-        """Save the model"""
-        store_path = join(DIR, self.model_name)
-        
-        save(self.model.state_dict(), store_path)
 
-    def fit(self, epochs: int, batch_size:int):
+    def fit(self, epochs:int, batch_size:int):
+        """Fit the model
+        Parameters:
+        epochs: int = The amount of epochs to train the model for
+        batch_size: int = The batch size to use for training
+        """
         # Initialize Dataloaders for the `train` and `val` splits of the dataset. 
         # A Dataloader loads a batch of samples from the each dataset split and concatenates these samples into a batch.
         dl_train = self.train
@@ -150,13 +159,26 @@ class Trainer:
             metrics_val = self.val_epoch(dl_val)
             df_val = df_val.append(DataFrame({'epoch': [epoch], **metrics_val}), ignore_index=True)
 
-        df_train.to_csv(f'savefolderpytorch\\train_{self.model_name}.csv')
-        df_val.to_csv(f'savefolderpytorch\\val_{self.model_name}.csv')
+        # Save the model data
+        df_train.to_csv(f'{self.DIR}\\train_{self.model_name}.csv')
+        df_val.to_csv(f'{self.DIR}\\val_{self.model_name}.csv')
         # Return a dataframe that logs the training process. This can be exported to a CSV or plotted directly.
     
-    def load_model(self, model_name:str, DIR:str=getcwd()):
+    def save_model(self, DIR:str=None):
+        """Save the model"""
+        if DIR is not None:
+            store_path = join(DIR, self.model_name)
+        else:
+            store_path = join(self.DIR, self.model_name)
+
+        save(self.model.state_dict(), store_path)
+
+    def load_model(self, model_name:str, DIR:str=None):
         """Load the model"""
-        store_path = join(DIR, model_name)
-        
+        if DIR is not None:
+            store_path = join(DIR, model_name)
+        else:
+            store_path = join(self.DIR, model_name)
+            
         self.model.load_state_dict(store_path)
         

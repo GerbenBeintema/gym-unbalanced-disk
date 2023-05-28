@@ -1,6 +1,6 @@
 from os import getcwd, path
 from pandas import read_csv, DataFrame, Series
-from numpy import array, concatenate
+from numpy import concatenate
 from torch.utils.data import Dataset, random_split
 
 class CustomDataset(Dataset):
@@ -35,7 +35,7 @@ class DATA():
             na: number of past y values used
             nb: number of past u values used
         returns:
-            all in the class
+            all in this class
         """
 
 
