@@ -1,6 +1,6 @@
 from os import getcwd, path
 from pandas import read_csv, DataFrame, Series
-from numpy import concatenate
+from numpy import array, concatenate
 from torch.utils.data import Dataset, random_split
 
 class CustomDataset(Dataset):
@@ -28,12 +28,14 @@ class CustomDataset(Dataset):
         
 
 class DATA():
-    def __init__(self, na:int=15, nb:int=15):
+    def __init__(self, na:int=15, nb:int=15, UseOE:bool=False, nf:int=100):
         """
         Initialize the data
         Parameters:
             na: number of past y values used
             nb: number of past u values used
+            UseOE: use the output error model
+            nf: number of features
         returns:
             all in this class
         """
@@ -45,7 +47,11 @@ class DATA():
         self.testsub = self._rename_df1(read_csv(self.testsubfilepath))
         self.testsim = read_csv(self.testsimfilepath, delimiter=', ')
 
-        self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
+        if not UseOE:
+            self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
+        else:
+            self.Xtrain, self.Ytrain = self.make_OE_data(self.train.u, self.train.th, nf)
+            
         #self.testsub_data = self.make_training_data(self.testsub.u, self.testsub.th, na, nb)
 
 
@@ -98,3 +104,11 @@ class DATA():
     #                 str += dict[j]
     #         list_for_dict[key] = str
     #     return df.rename(columns=list_for_dict)
+
+    def make_OE_data(self, udata, ydata, nf=100):
+        U = [] 
+        Y = [] 
+        for k in range(nf, len(udata)+1):
+            U.append(udata[k-nf:k])
+            Y.append(ydata[k-nf:k])
+        return array(U), array(Y)
