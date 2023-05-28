@@ -29,7 +29,7 @@ class CustomDataset(Dataset):
         
 
 class DATA():
-    def __init__(self, na:int=15, nb:int=15, UseOE:bool=False, nf:int=100):
+    def __init__(self, na:int=15, nb:int=15, UseOE:bool=False, nf:int=100, NOE_Val:int=8000):
         """
         Initialize the data
         Parameters:
@@ -37,6 +37,7 @@ class DATA():
             nb: number of past u values used
             UseOE: use the output error model
             nf: number of features
+            NOE_Val: number of steps used for validation
         returns:
             all in this class
         """
@@ -51,8 +52,16 @@ class DATA():
         if not UseOE:
             self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
         else:
+            # Assert lenght for validation split
+            assert NOE_Val < len(self.train), "NOE_Val must be smaller than the length of the training data"
+            assert NOE_Val >= 0, "NOE_Val must be positive"
+            val_split = int(len(self.train)-NOE_Val)
+
+
             convert = lambda x: [tensor(xi,dtype=float64) for xi in x]
             self.Xtrain, self.Ytrain = convert(self.make_OE_data(self.train.u, self.train.th, nf))
+            self.Xtrain, self.Xval, self.Ytrain, self.Yval = self.Xtrain[val_split:], self.Xtrain[:val_split], self.Ytrain[val_split:], self.Ytrain[:val_split]
+            
 
         #self.testsub_data = self.make_training_data(self.testsub.u, self.testsub.th, na, nb)
 
