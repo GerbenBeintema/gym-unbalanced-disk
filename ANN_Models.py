@@ -58,7 +58,7 @@ class RNN(nn.Module):
         """forward pass of the RNN model"""
 
         # Initialize hidden state
-        hidden = zeros(inputs.size(0), self.hidden_size, dtype=float64)
+        hidden = zeros(inputs.size(0), self.hidden_size, dtype=float64, device=inputs.device)
         outputs = []
 
         for i in range(inputs.size(1)):

@@ -3,15 +3,19 @@ from torch.nn.utils import clip_grad_value_
 from torch import device, save, no_grad
 from torch.utils.data import DataLoader
 from torch.nn import Module, MSELoss
-from torch import tensor, float32
+from torch import tensor, float32, mean
 from torch.optim import Adam
 from pandas import DataFrame
 from os.path import join
 from sys import stdout
 from os import getcwd
 from tqdm import tqdm
+from numpy import arange
+from numpy.random import shuffle
+import matplotlib.pyplot as plt
 
 class Trainer:
+    """Trainer class for training a model, works for NL and ANN models (NOE use other trainer)"""
     def __init__(self, model:Module, dl_train:DataLoader, dl_val:DataLoader, dl_test:DataLoader, DIR:str):
         self.device = device("cuda" if is_available() else "cpu")
         print(f"The device that will be used in training is {get_device_name(self.device)}")
@@ -181,4 +185,109 @@ class Trainer:
             store_path = join(self.DIR, model_name)
             
         self.model.load_state_dict(store_path)
+
+class NOE_Trainer():
+    """NOE Trainer class, for other models use the other trainer class"""
+    def __init__(self, model, Xtrain:tensor, Ytrain:tensor, Xval:tensor, Yval:tensor, Xtest:tensor=None, Ytest:tensor=None, DIR:str=None):
+        """Initialize the trainer
+        Parameters:
+            model: model
+            Xtrain: training input
+            Ytrain: training output
+            Xval: validation input
+            Yval: validation output
+            Xtest: test input
+            Ytest: test output
+            DIR: directory to store the model data
+        """
+        self.device = 'cuda' if is_available() else 'cpu'
+
+        # Set the device to use for training
+        self.model = model.to(self.device)
+        self.model_name = model.name
+
+        self.optimizer = Adam(self.model.parameters(), lr=0.001)
+        self.criterion = MSELoss()
+
+        assert self.criterion is not None, "Please define a loss function"
+        assert self.optimizer is not None, "Please define an optimizer"
+        assert self.model_name is not None, "Please define a model name"
+
+        self.Xtrain = Xtrain.to(self.device)
+        self.Ytrain = Ytrain.to(self.device)
+        self.Xval = Xval.to(self.device)
+        self.Yval = Yval.to(self.device)
+
+        self.Xtest = Xtest.to(self.device) if Xtest is not None else None
+        self.Ytest = Ytest.to(self.device) if Ytest is not None else None
+        
+        self.DIR = DIR
+
+    def fit(self, epochs:int, batch_size:int, n_burn:int, plot:bool=True):
+        """Fit the model
+        Parameters:
+            epochs: int = The amount of epochs to train the model for
+            batch_size: int = The batch size to use for training
+            n_burn: int = The amount of burn-in samples to use for the loss function
+            plot: bool = Whether to plot the training process
+        """
+        ids = arange(len(self.Xtrain),dtype=int) 
+
+        for epoch in range(epochs):
+            shuffle(ids) #inspace shuffle of the ids of the trainin set to select a random subset 
+            for i in range(0,len(self.Xtrain),batch_size):
+                ids_now = ids[i:i+batch_size] #the ids of the current batch
+                Uin = self.Xtrain[ids_now].to(self.device) #d)
+                Y_real = self.Ytrain[ids_now].to(self.device) #d)
+
+                Y_predict = self.model.forward(inputs=Uin) #d)
+                residual = Y_real - Y_predict #d)
+                Loss = mean(residual[:,n_burn:]**2) #d)
+                
+                self.optimizer.zero_grad()  #d)
+                Loss.backward()  #d)
+                self.optimizer.step()  #d)
+            
+            with no_grad(): #monitor
+                Loss_val = mean((self.model(inputs=self.Xval)[:,n_burn:] - self.Yval[:,n_burn:])**2)**0.5
+                Loss_train = mean((self.model(inputs=self.Xtrain)[:,n_burn:] - self.Ytrain[:,n_burn:])**2)**0.5
+                print(f'epoch={epoch}, Validation NRMS={Loss_val.item():.2%}, Train NRMS={Loss_train.item():.2%}')
+        
+        if plot:
+            self.plot()
+    
+    def save_model(self, DIR:str|None=None):
+        """Save the model"""
+        if DIR is not None:
+            store_path = join(DIR, self.model_name)
+        else:
+            store_path = join(self.DIR, self.model_name)
+
+        save(self.model.state_dict(), store_path)
+
+    def load_model(self, model_name:str|None, DIR:str|None=None):
+        """Load the model"""
+        if DIR is not None:
+            store_path = join(DIR, model_name)
+        else:
+            store_path = join(self.DIR, model_name)
+            
+        self.model.load_state_dict(store_path)
+
+    def plot(self):
+        with no_grad():
+            plt.plot(self.Yval[0])
+            plt.plot(self.model(inputs=self.Xval)[0],'--')
+            plt.xlabel('k')
+            plt.ylabel('y')
+            plt.xlim(0,250)
+            plt.legend(['real','predicted'])
+            plt.show()
+            plt.plot(mean((self.Ytrain-self.model(inputs=self.Xtrain)).numpy()**2,axis=0)**0.5) #average over the error in batch
+            plt.title('batch averaged time-dependent error')
+            plt.ylabel('error')
+            plt.xlabel('i')
+            plt.grid()
+            plt.show()
+
         

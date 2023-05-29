@@ -47,7 +47,7 @@ class DATA():
 
         self.train = self._rename_df1(read_csv(self.trainfilepath))
         self.testsub = self._rename_df1(read_csv(self.testsubfilepath))
-        self.testsim = read_csv(self.testsimfilepath, delimiter=', ')
+        self.testsim = self._rename_df1(read_csv(self.testsimfilepath))
 
         if not UseOE:
             self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
