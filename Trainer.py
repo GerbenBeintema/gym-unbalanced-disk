@@ -240,21 +240,22 @@ class NOE_Trainer():
                 Uin = self.Xtrain[ids_now].to(self.device) #d)
                 Y_real = self.Ytrain[ids_now].to(self.device) #d)
 
-                Y_predict = self.model.forward(inputs=Uin) #d)
-                residual = Y_real - Y_predict #d)
-                Loss = mean(residual[:,n_burn:]**2) #d)
+                Y_predict = self.model(inputs=Uin) #d)
+                Loss = self.criterion(Y_predict, Y_real) #d)
                 
                 self.optimizer.zero_grad()  #d)
                 Loss.backward()  #d)
                 self.optimizer.step()  #d)
             
             with no_grad(): #monitor
-                Loss_val = mean((self.model(inputs=self.Xval)[:,n_burn:] - self.Yval[:,n_burn:])**2)**0.5
-                Loss_train = mean((self.model(inputs=self.Xtrain)[:,n_burn:] - self.Ytrain[:,n_burn:])**2)**0.5
+                self.model.eval()
+                Loss_val = self.criterion(self.model(inputs=self.Xval)[:,n_burn:], self.Yval[:,n_burn:])
+                Loss_train = self.criterion(self.model(inputs=self.Xtrain)[:,n_burn:], self.Ytrain[:,n_burn:])
                 print(f'epoch={epoch}, Validation NRMS={Loss_val.item():.2%}, Train NRMS={Loss_train.item():.2%}')
+                self.model.train()
         
         if plot:
-            self.plot()
+            self.plot_results()
     
     def save_model(self, DIR:str|None=None):
         """Save the model"""
@@ -274,20 +275,22 @@ class NOE_Trainer():
             
         self.model.load_state_dict(store_path)
 
-    def plot(self):
+    def plot_results(self):
         with no_grad():
-            plt.plot(self.Yval[0])
-            plt.plot(self.model(inputs=self.Xval)[0],'--')
+            self.model.eval()
+            plt.plot(self.Yval[0].cpu().numpy())
+            plt.plot(self.model(inputs=self.Xval)[0].cpu().numpy(),'--')
             plt.xlabel('k')
             plt.ylabel('y')
             plt.xlim(0,250)
             plt.legend(['real','predicted'])
             plt.show()
-            plt.plot(mean((self.Ytrain-self.model(inputs=self.Xtrain)).numpy()**2,axis=0)**0.5) #average over the error in batch
+            plt.plot(mean((self.Ytrain-self.model(inputs=self.Xtrain))**2,axis=0).cpu().numpy()**0.5) #average over the error in batch
             plt.title('batch averaged time-dependent error')
             plt.ylabel('error')
             plt.xlabel('i')
             plt.grid()
             plt.show()
+            self.model.train()
 
         
