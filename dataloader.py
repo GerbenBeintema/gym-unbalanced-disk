@@ -51,6 +51,7 @@ class DATA():
 
         if not UseOE:
             self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
+            self.Xval, self.Yval = self.make_training_data(self.testsim.u, self.testsim.th, na, nb)
         else:
             # Assert lenght for validation split
             assert NOE_Val < len(self.train), "NOE_Val must be smaller than the length of the training data"
@@ -60,7 +61,10 @@ class DATA():
 
             convert = lambda x: [tensor(xi,dtype=float64) for xi in x]
             self.Xtrain, self.Ytrain = convert(self.make_OE_data(self.train.u, self.train.th, nf))
-            self.Xtrain, self.Xval, self.Ytrain, self.Yval = self.Xtrain[val_split:], self.Xtrain[:val_split], self.Ytrain[val_split:], self.Ytrain[:val_split]
+            if NOE_Val != 0:
+                self.Xtrain, self.Xval, self.Ytrain, self.Yval = self.Xtrain[val_split:], self.Xtrain[:val_split], self.Ytrain[val_split:], self.Ytrain[:val_split]
+            else:
+                self.Xval, self.Yval = convert(self.make_OE_data(self.testsim.u, self.testsim.th, nf))
             
 
         #self.testsub_data = self.make_training_data(self.testsub.u, self.testsub.th, na, nb)
