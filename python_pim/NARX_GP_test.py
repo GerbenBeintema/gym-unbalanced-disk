@@ -1,9 +1,11 @@
+#%%
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ExpSineSquared, WhiteKernel
 import os
 
+#%%
 def import_data():
     
     # go the parent directory
@@ -59,30 +61,34 @@ def make_training_data(ulist,ylist,na,nb):
         Ydata.append(ylist[k]) 
     return np.array(Xdata), np.array(Ydata)
 
+#%%
 if __name__ == '__main__':
+    
+    batches= 24
+    
     th_train, u_train, upast_test, thpast_test = import_data()
-    th_train = th_train[0:3000]
-    u_train = u_train[0:3000]
-
+    batch_size = len(u_train)//batches
+    ker = RBF(length_scale=0.1) + WhiteKernel(noise_level=0.01)  
+    reg = GaussianProcessRegressor(ker, n_restarts_optimizer=1)  
     na, nb = 10, 10
     np.random.seed(42)
     N = 500
+    
+    split = 0.8
+    
+    
+    for i in range(batches):
+        th_train_batch = th_train[i*batch_size:i*batch_size+batch_size].copy()
+        u_train_batch = u_train[i*batch_size:i*batch_size+batch_size].copy()
 
-
-
-    split = 0.75 #75% training and 25% validation split
-    split_index = int(len(th_train)*split) 
-    Xtrain, Ytrain = make_training_data(th_train[:split_index],u_train[:split_index], na, nb) 
-    Xval,   Yval   = make_training_data(th_train[split_index:],u_train[split_index:], na, nb)
-    print('Xtrain.shape',Xtrain.shape)
-    print('Xval.shape',Xval.shape)
-
-
-    ker = RBF(length_scale=0.1) + WhiteKernel(noise_level=0.01)  
-    reg = GaussianProcessRegressor(ker, n_restarts_optimizer=10)  
-    print('training...')
-    reg.fit(Xtrain,Ytrain)    
-    print('done training')
+ 
+        split_index = int(len(th_train_batch)*split) 
+        Xtrain, Ytrain = make_training_data(th_train_batch[:split_index],u_train_batch[:split_index], na, nb) 
+        Xval,   Yval   = make_training_data(th_train_batch[split_index:],u_train_batch[split_index:], na, nb)
+        print(f"batch {i}")
+        reg.fit(Xtrain,Ytrain)  
+        y_val_pred, y_val_pred_std = reg.predict(Xval,return_std=True)
+        print(f'Validation NRMS= {np.mean((y_val_pred-Yval)**2)**0.5/np.std(y_val_pred)}')
 
 
     #residual calculations and plotting
@@ -107,3 +113,5 @@ if __name__ == '__main__':
     print(f'Validation NRMS= {np.mean((Yval_pred-Yval)**2)**0.5/np.std(Yval)}') 
 
 
+
+# %%
