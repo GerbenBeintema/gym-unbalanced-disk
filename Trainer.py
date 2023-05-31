@@ -260,13 +260,15 @@ class NOE_Trainer(Model_processes):
                 self.optimizer.zero_grad()  #d)
                 Loss.backward()  #d)
                 self.optimizer.step()  #d)
-            
+                print(f'epoch={epoch}, batch={i}, Loss={Loss.item():.2%}, {(i/len(self.Xtrain)):.2%} %',end='\r')
+
             with no_grad(): #monitor
                 self.model.eval()
                 Loss_val = self.criterion(self.model(inputs=self.Xval)[:,n_burn:], self.Yval[:,n_burn:])
                 Loss_train = self.criterion(self.model(inputs=self.Xtrain)[:,n_burn:], self.Ytrain[:,n_burn:])
                 print(f'epoch={epoch}, Validation NRMS={Loss_val.item():.2%}, Train NRMS={Loss_train.item():.2%}')
                 self.model.train()
+            
         
         if plot:
             self.plot_results()
