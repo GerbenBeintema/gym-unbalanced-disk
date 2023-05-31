@@ -42,6 +42,42 @@ class Model_processes():
             store_path = join(self.DIR, model_name)
             
         self.model.load_state_dict(store_path)
+    
+    def plot_results(self, NOE:bool=False):
+        """Plot the results of the model """
+        if NOE:
+            assert self.Xval is not None, "No validation data available"
+            assert self.Yval is not None, "No validation data available"
+            assert self.Xtrain is not None, "No training data available"
+            assert self.Ytrain is not None, "No training data available"
+
+            with no_grad():
+                self.model.eval()
+                plt.plot(self.Yval[0].cpu().numpy())
+                plt.plot(self.model(inputs=self.Xval)[0].cpu().numpy(),'--')
+                plt.xlabel('k')
+                plt.ylabel('y')
+                plt.xlim(0,100)
+                plt.legend(['real','predicted'])
+                plt.show()
+                plt.plot(mean((self.Ytrain-self.model(inputs=self.Xtrain))**2,axis=0).cpu().numpy()**0.5) #average over the error in batch
+                plt.title('batch averaged time-dependent error')
+                plt.ylabel('error')
+                plt.xlabel('i')
+                plt.grid()
+                plt.show()
+                self.model.train()
+        else:
+            plt.plot(self.df_train.groupby("epoch")["loss"].mean(), color='blue',label='training')
+            plt.plot(self.df_val.groupby("epoch")["loss"].mean(),'--',color='orange',label='validation')
+            plt.legend()
+            plt.xlabel('epoch')
+            plt.ylabel('loss')
+            plt.xlim(1, self.df_train["epoch"].max())
+            plt.grid()
+            plt.show()
+
+                
 
 class Trainer(Model_processes):
     """Trainer class for training a model, works for NL and ANN models (NOE use other trainer)"""
@@ -198,6 +234,11 @@ class Trainer(Model_processes):
         # Save the model data
         df_train.to_csv(f'{self.DIR}\\train_{self.model_name}.csv')
         df_val.to_csv(f'{self.DIR}\\val_{self.model_name}.csv')
+        self.df_train = df_train
+        self.df_val = df_val
+
+        self.plot_results()
+
         # Return a dataframe that logs the training process. This can be exported to a CSV or plotted directly.
 
 class NOE_Trainer(Model_processes):
@@ -271,22 +312,4 @@ class NOE_Trainer(Model_processes):
             
         
         if plot:
-            self.plot_results()
-    
-    def plot_results(self):
-        with no_grad():
-            self.model.eval()
-            plt.plot(self.Yval[0].cpu().numpy())
-            plt.plot(self.model(inputs=self.Xval)[0].cpu().numpy(),'--')
-            plt.xlabel('k')
-            plt.ylabel('y')
-            plt.xlim(0,100)
-            plt.legend(['real','predicted'])
-            plt.show()
-            plt.plot(mean((self.Ytrain-self.model(inputs=self.Xtrain))**2,axis=0).cpu().numpy()**0.5) #average over the error in batch
-            plt.title('batch averaged time-dependent error')
-            plt.ylabel('error')
-            plt.xlabel('i')
-            plt.grid()
-            plt.show()
-            self.model.train()
+            self.plot_results(NOE=True)
