@@ -60,45 +60,47 @@ def make_training_data(ulist,ylist,na,nb):
         Xdata.append(np.concatenate([ulist[k-nb:k],ylist[k-na:k]])) 
         Ydata.append(ylist[k]) 
     return np.array(Xdata), np.array(Ydata)
-
+def batch_data(batch=0,batch_size=None, split=0.8):
+    th_train_batch = th_train[i*batch_size:i*batch_size+batch_size].copy()
+    u_train_batch = u_train[i*batch_size:i*batch_size+batch_size].copy()
+    split_index = int(len(th_train_batch)*split) 
+    Xtrain, Ytrain = make_training_data(th_train_batch[:split_index],u_train_batch[:split_index], na, nb) 
+    Xval,   Yval   = make_training_data(th_train_batch[split_index:],u_train_batch[split_index:], na, nb)    
+    return Xtrain, Ytrain, Xval, Yval
 #%%
 if __name__ == '__main__':
     
-    batches= 24
+    batches= 4
     
     th_train, u_train, upast_test, thpast_test = import_data()
     batch_size = len(u_train)//batches
     ker = RBF(length_scale=0.1) + WhiteKernel(noise_level=0.01)  
-    reg = GaussianProcessRegressor(ker, n_restarts_optimizer=1)  
+    reg = GaussianProcessRegressor(ker, n_restarts_optimizer=0)  
     na, nb = 10, 10
     np.random.seed(42)
     N = 500
-    
     split = 0.8
     
     
     for i in range(batches):
-        th_train_batch = th_train[i*batch_size:i*batch_size+batch_size].copy()
-        u_train_batch = u_train[i*batch_size:i*batch_size+batch_size].copy()
-
- 
-        split_index = int(len(th_train_batch)*split) 
-        Xtrain, Ytrain = make_training_data(th_train_batch[:split_index],u_train_batch[:split_index], na, nb) 
-        Xval,   Yval   = make_training_data(th_train_batch[split_index:],u_train_batch[split_index:], na, nb)
-        print(f"batch {i}")
+        Xtrain, Ytrain, Xval, Yval = batch_data(i,batch_size,split)
+        
+        print(f"batch {i}/{batches}")
         reg.fit(Xtrain,Ytrain)  
         y_val_pred, y_val_pred_std = reg.predict(Xval,return_std=True)
         print(f'Validation NRMS= {np.mean((y_val_pred-Yval)**2)**0.5/np.std(y_val_pred)}')
+        break
 
 
     #residual calculations and plotting
-
+#%%
+if __name__ == '__main__':
     Ytrain_pred, Ytrain_pred_std = reg.predict(Xtrain,return_std=True)  
     plt.figure(figsize=(12,5))  
     plt.plot(Ytrain)  
     plt.title('prediction on the training set')
     Ytrain_pred, Ytrain_pred_std = reg.predict(Xtrain,return_std=True)  
-    # plt.errorbar(np.arange(len(Xtrain)), (Ytrain_pred), yerr=2*Ytrain_pred_std,fmt='.r')  
+    plt.errorbar(np.arange(len(Xtrain)), (Ytrain_pred), yerr=2*Ytrain_pred_std,fmt='.r')  
     plt.grid(); plt.xlabel('sample'); plt.ylabel('y'); plt.legend(['measured','pred']) 
     plt.show()  
 
