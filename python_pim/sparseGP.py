@@ -13,13 +13,13 @@ Y = Y[:,None]
 X = X[0:1000]
 Y = Y[0:1000]
 # Define the kernel
-kernel = GPy.kern.RBF(input_dim=5) + GPy.kern.RBF(1)
+kernel = GPy.kern.RBF(input_dim=5) + GPy.kern.RBF(5)
 
 # Create the NARX model
 model = GPy.models.GPRegression(X, Y, kernel=kernel)
 
 # Optimize the model
-model.optimize()
+model.optimize('bfgs')
 
 # New test data
 #%%
