@@ -2,20 +2,14 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-# make sure that the current working directory is the directory of the script
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-print(os.getcwd())
-out = np.load('training-data.npz')
-th_train = out['th'] #th[0],th[1],th[2],th[3],...
-u_train = out['u'] #u[0],u[1],u[2],u[3],...
-
-# data = np.load('test-prediction-submission-file.npz')
-data = np.load('test-prediction-submission-file.npz')
-upast_test = data['upast'] #N by u[k-15],u[k-14],...,u[k-1]
-thpast_test = data['thpast'] #N by y[k-15],y[k-14],...,y[k-1]
-# thpred = data['thnow'] #all zeros
+from pim_support import *
+from sklearn import linear_model
+from sklearn import gaussian_process
+from sklearn.gaussian_process.kernels import RBF, ExpSineSquared, WhiteKernel
 
 
+th_train, u_train, upast_test, thpast_test = import_data()
+th_train = th_train[:10000]
 def create_IO_data(u,y,na,nb):
     X = []
     Y = []
@@ -27,10 +21,9 @@ def create_IO_data(u,y,na,nb):
 na = 5
 nb = 5
 Xtrain, Ytrain = create_IO_data(u_train, th_train, na, nb)
-Xtrain = Xtrain[:10000]
-Ytrain = Ytrain[:10000]
-from sklearn import gaussian_process
-reg = gaussian_process.GaussianProcessRegressor()
+
+kernel = RBF(length_scale=1.0, length_scale_bounds=(1e-1, 10.0)) 
+reg = gaussian_process.GaussianProcessRegressor(kernel=kernel)
 reg.fit(Xtrain,Ytrain)
 #%%
 Ytrain_pred = reg.predict(Xtrain)
@@ -45,16 +38,10 @@ Xtest = np.concatenate([upast_test[:,15-nb:], thpast_test[:,15-na:]],axis=1)
 Ypredict = reg.predict(Xtest)
 
 assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
-
-
 plt.plot(Ytrain_pred, c='r',alpha=0.5)
 plt.scatter(np.arange(len(Ytrain)),Ytrain,alpha=1, s=0.1)
 
-plt.figure()
-plt.title('prediction on the training set')
-plt.plot(Ypredict, c='r',alpha=0.5)
-plt.scatter(np.arange(len(Ypredict)),Ypredict,alpha=1, s=0.1)
-
+plt.plot()
 
 # np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
 # %%
