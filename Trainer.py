@@ -207,7 +207,7 @@ class Trainer(Model_processes):
             "loss": [total_loss],
         }
 
-    def fit(self, epochs:int, batch_size:int):
+    def fit(self, epochs:int, batch_size:int, save_log:bool=True):
         """Fit the model
         Parameters:
         epochs: int = The amount of epochs to train the model for
@@ -231,13 +231,16 @@ class Trainer(Model_processes):
             metrics_val = self.val_epoch(dl_val)
             df_val = df_val.append(DataFrame({'epoch': [epoch], **metrics_val}), ignore_index=True)
 
-        # Save the model data
-        df_train.to_csv(f'{self.DIR}\\train_{self.model_name}.csv')
-        df_val.to_csv(f'{self.DIR}\\val_{self.model_name}.csv')
-        self.df_train = df_train
-        self.df_val = df_val
+        if save_log:
+            # Save the model data
+            df_train.to_csv(f'{self.DIR}\\train_{self.model_name}.csv')
+            df_val.to_csv(f'{self.DIR}\\val_{self.model_name}.csv')
+            self.df_train = df_train
+            self.df_val = df_val
 
-        self.plot_results()
+            self.plot_results()
+        else:
+            return df_val["loss"].min()
 
         # Return a dataframe that logs the training process. This can be exported to a CSV or plotted directly.
 
