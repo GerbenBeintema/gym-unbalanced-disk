@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from pim_support import *
 import pandas as pd
 import os
+import time
 # New test data
 # Input data
 na, nb = 5, 5
@@ -16,25 +17,37 @@ X = X[0:1000]
 Y = Y[0:1000]
 # # Define the kernel
 # kernel = GPy.kern.RBF(input_dim=5, variance=0.1, lengthscale=0.5) 
+#%%
 
+#%%
 # Create the NARX model
-variance_interval = [0.01, 0.1, 1, 10, 100]
-lengthscale_interval = [0.01, 0.1, 1, 10, 100]
-
+variance_interval = np.arange(0,1,0.2)
+lengthscale_interval = np.arange(0,1,0.2)
+noise_variance_interval = [1]
 data = pd.DataFrame(columns=['variance', 'lengthscale', 'rms_mean', 'rms_deg', 'nmrs'])
+time_start = time.time()
+
+num_iterations = len(variance_interval)*len(lengthscale_interval)*len(noise_variance_interval)
+iteration = 0
 for variance in variance_interval:
     for lengthscale in lengthscale_interval:
-        
-        kernel = GPy.kern.RBF(input_dim=10, variance=variance, lengthscale=lengthscale)
-        model = GPy.models.GPRegression(X, Y,kernel=kernel)
-        model.optimize('bfgs')
-        
-        Y_pred, Y_pred_cov = model.predict(X)
-        rms_mean =  np.mean((Y_pred-Y)**2)**0.5
-        rms_deg = np.mean((Y_pred-Y)**2)**0.5/(2*np.pi)*360
-        nmrs =  np.mean((Y_pred-Y)**2)**0.5/Y.std()*100
-        data = data.append({'variance': variance, 'lengthscale': lengthscale, 'rms_mean': rms_mean, 'rms_deg': rms_deg, 'nmrs': nmrs}, ignore_index=True)
-        
+        for noise_variance in noise_variance_interval:
+            print(f'Iteration {iteration+1}/{num_iterations} ', end='', flush=False)
+            iteration_start = time.time()           
+            iteration += 1
+            kernel = GPy.kern.RBF(input_dim=10, variance=variance, lengthscale=lengthscale) + GPy.kern.White(10, variance=noise_variance)
+            model = GPy.models.GPRegression(X, Y,kernel=kernel)
+            model.optimize('bfgs')
+            
+            Y_pred, Y_pred_cov = model.predict(X)
+            rms_mean =  np.mean((Y_pred-Y)**2)**0.5
+            rms_deg = np.mean((Y_pred-Y)**2)**0.5/(2*np.pi)*360
+            nmrs =  np.mean((Y_pred-Y)**2)**0.5/Y.std()*100
+            data = data.append({'variance': variance, 'lengthscale': lengthscale, 'rms_mean': rms_mean, 'nmrs': nmrs}, ignore_index=True)
+            iteration_end = time.time()
+           
+
+print('')
 print(data)    
 
 #%%
@@ -56,8 +69,6 @@ data.to_csv(f'data/data{maxnum+1}.csv', index=False)
 # New test data
 #%%
 # Make predictions
-
-
 # Y_pred_mean, Y_pred_cov = model.predict(X)
 
 # make a 3d plot of the variance lengthscale and rms_mean
