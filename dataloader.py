@@ -46,8 +46,8 @@ class DATA():
         self._get_data()
 
         self.train = self._rename_df1(read_csv(self.trainfilepath))
-        self.testsub = self._rename_df1(read_csv(self.testsubfilepath))
         self.testsim = self._rename_df1(read_csv(self.testsimfilepath))
+        self.testsub = self._rename_df2(read_csv(self.testsubfilepath))
 
         if not UseOE:
             self.Xtrain, self.Ytrain = self.make_training_data(self.train.u, self.train.th, na, nb)
@@ -108,17 +108,29 @@ class DATA():
         """Rename the dataframe colums to something more callable"""
         return df.rename(columns={'# u':'u', ' th':'th'})
     
-    # def _rename_df2(self, df): # Does not work yet
-    #     """Rename the dataframe colums to something more callable"""
-    #     list_for_dict = {}
-    #     dict = {'u':'u','y':'y','[':'[',']':']','k':'k','-':'-','1':'1','2':'2','3':'3','4':'4','5':'5','6':'6','7':'7','8':'8','9':'9','0':'0'}
-    #     for idx, key in enumerate(Series(self.testsub.keys())):
-    #         str = ''
-    #         for j in key:
-    #             if j in dict:
-    #                 str += dict[j]
-    #         list_for_dict[key] = str
-    #     return df.rename(columns=list_for_dict)
+    def _rename_df2(self, df): # Does not work yet
+        """Rename the dataframe colums to something more callable"""
+        # Acceptable letters
+        accept_letter = ["u", "y", "[", "]", "k", "-","1","2","3","4","5","6","7","8","9","0"]
+
+        # Dict to rename the columns
+        dict_name_change = {}
+
+        # Loop over the columns names
+        for _, item in enumerate(df.keys()):
+            string = ""
+            # Loop over the letters in the column name
+            for j in item: 
+
+                # If the letter is acceptable add it to the string
+                if j in accept_letter:
+                    string+=j
+
+            # Add the new name to the dict        
+            dict_name_change[item] = string
+        
+        # Return the renamed dataframe
+        return df.rename(columns=dict_name_change)
 
     def make_OE_data(self, udata, ydata, nf=100):
         U = [] 
