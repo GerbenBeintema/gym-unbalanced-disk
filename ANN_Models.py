@@ -23,10 +23,11 @@ class NARX(nn.Module):
     def __init__(self, out_features, output_dim:int=1):
         super().__init__()
         self.fc0 = nn.Sequential(nn.LazyLinear(out_features),
-                                nn.LeakyReLU(),
-                                nn.Linear(out_features, out_features),
-                                nn.LeakyReLU())
-        self.fc1 = nn.Sequential(nn.LazyLinear(out_features),
+                                 nn.LeakyReLU(),
+                                 nn.Linear(out_features, out_features),
+                                 nn.LeakyReLU()
+                                 )
+        self.fc1 = nn.Sequential(nn.Linear(out_features, out_features),
                                 nn.LeakyReLU(),
                                 nn.Linear(out_features, output_dim),
         )
