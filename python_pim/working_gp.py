@@ -17,12 +17,13 @@ X = X[0:1000]
 Y = Y[0:1000]
 # # Define the kernel
 # kernel = GPy.kern.RBF(input_dim=5, variance=0.1, lengthscale=0.5) 
-#%%
 
 #%%
 # Create the NARX model
-variance_interval = np.arange(0,1,0.2)
-lengthscale_interval = np.arange(0,1,0.2)
+# variance_interval = np.arange(0,1,0.2)
+variance_interval = [1]
+lengthscale_interval = [1]
+# lengthscale_interval = np.arange(0,1,0.2)
 noise_variance_interval = [1]
 data = pd.DataFrame(columns=['variance', 'lengthscale', 'rms_mean', 'rms_deg', 'nmrs'])
 time_start = time.time()
@@ -51,7 +52,6 @@ print('')
 print(data)    
 
 #%%
-
 # save the data to a csv file with name data{highest number}.csv
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 filenames = os.listdir('data')
@@ -61,11 +61,6 @@ for i in range(len(filenames)):
     if num > maxnum:
         maxnum = num
 data.to_csv(f'data/data{maxnum+1}.csv', index=False)
-        
-
-# Optimize the model
-
-
 # New test data
 #%%
 # Make predictions

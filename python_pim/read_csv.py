@@ -5,7 +5,7 @@ import plotly.express as px
 
 
 #import csv
-data = pd.read_csv('data/data2.csv')
+data = pd.read_csv('data/data5.csv')
 
 #plot data based on varaince and lengthscale
 
@@ -16,7 +16,7 @@ data = pd.read_csv('data/data2.csv')
 
 #%%
 df = px.data.iris()
-fig = px.scatter_3d(data, x='lengthscale', y='variance', z='rms_mean',
+fig = px.scatter_3d(data, x='lengthscale', y='variance', z='nmrs',
               color='rms_mean')
 fig.show()
 
