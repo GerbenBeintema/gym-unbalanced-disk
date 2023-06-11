@@ -4,7 +4,9 @@ import numpy as np
 import os
 from UnbalancedDisk import *
 
+
 import matplotlib.pyplot as plt
+
 
 
 
@@ -26,9 +28,10 @@ def QlearnGrid(env,Qmat = None, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=100000
     
     obs_list = []
     reward_list = []
+    highest_reward = -1000
     if Qmat is None:
         Qmat = np.zeros(([360,30,env.action_space.n])) # i chose the amount of states for accel randomly
-    
+    cur_nsteps = 0
     
     obs = env.reset()
     for z in range(nsteps):
@@ -51,19 +54,24 @@ def QlearnGrid(env,Qmat = None, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=100000
             TD = reward + gamma*MaxQ - Qmat[round(obs[0]),round(obs[1]),action] 
             Qmat[round(obs[0]),round(obs[1]),action] += alpha*TD 
             obs = obs_new 
-        
+        highest_reward = max(highest_reward,reward)
+
         obs_list.append(obs)
         reward_list.append(reward)
         if visualize:
             env.render()
-            time.sleep(1/24)
+            print(f"{z}/{nsteps} - highest reward: {highest_reward:.4f} cur reward ={reward:.4f} ", end='\r')
+            
+        if z == cur_nsteps + 1000:
+            print(f"{z}/{nsteps} - highest reward: {highest_reward:.4f} cur reward ={reward:.4f} ", end='\r')
+            cur_nsteps = z
     
     return Qmat, obs_list, reward_list
 
 
 
 # %%
-Qmat, obs_list, reward_list = QlearnGrid(env, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=300000, epsilon_decay=False, visualize=False)
+Qmat, obs_list, reward_list = QlearnGrid(env, alpha=0.1, epsilon=0.2, gamma=1.0, nsteps=500000, epsilon_decay=False, visualize=False)
 #%%
 visualize_range = -1000
 plt.plot((np.array(obs_list)[:,0]), label="angle" )
@@ -73,9 +81,9 @@ plt.legend()
 plt.show()
 #%%
 np.save("Qmat.npy",Qmat)
-# %%
-#use the Q matrix calculated to visualize it
+
 np.load("Qmat.npy")
 #%%
+#use the Q matrix calculated to visualize it
 Qmat, obs_list, reward_list = QlearnGrid(env, Qmat=Qmat, alpha=0.1, epsilon=0, gamma=1.0, nsteps=5000, epsilon_decay=False, visualize=True)
 # %%
