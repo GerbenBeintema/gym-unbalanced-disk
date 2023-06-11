@@ -50,8 +50,12 @@ class UnbalancedDisk(gym.Env):
         self.reset()
         
     def reward_function(self):
-        if self.th > np.pi/2 and np.abs(self.omega) < 1e-2:
-            return 1/np.abs((np.pi/2-np.abs(self.th)))
+        # if in the higher part of the circle and standing still then  reward
+        if self.th > np.pi/2:
+            return 1/np.abs((np.pi/2-np.abs(self.th))) +10
+        # if reached top and standing still then large reward
+        elif np.abs(self.th) > np.pi/2-0.1 and np.abs(self.omega) < 1e-2:
+            return +10000
         else:
             return -1 - np.abs(np.pi-np.abs(self.th))
 

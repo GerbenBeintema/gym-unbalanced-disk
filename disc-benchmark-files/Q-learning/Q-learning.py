@@ -3,6 +3,7 @@ import gym, gym_unbalanced_disk, time
 import numpy as np
 import os
 from UnbalancedDisk import *
+
 import matplotlib.pyplot as plt
 
 
@@ -20,12 +21,15 @@ def argmax(a):
     return np.random.choice(np.arange(len(a),dtype=int)[a==np.max(a)])
 
 
-def QlearnGrid(env, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=10000, epsilon_decay=True, visualize=False):
+def QlearnGrid(env,Qmat = None, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=100000, epsilon_decay=True, visualize=False):
     #init Q:
     
     obs_list = []
     reward_list = []
-    Qmat = np.zeros(([360,30,env.action_space.n])) # i chose the amount of states for accel randomly
+    if Qmat is None:
+        Qmat = np.zeros(([360,30,env.action_space.n])) # i chose the amount of states for accel randomly
+    
+    
     obs = env.reset()
     for z in range(nsteps):
         if epsilon_decay:
@@ -59,15 +63,19 @@ def QlearnGrid(env, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=10000, epsilon_dec
 
 
 # %%
-Qmat, obs_list, reward_list = QlearnGrid(env, alpha=0.1, epsilon=1, gamma=1.0, nsteps=1000000)
+Qmat, obs_list, reward_list = QlearnGrid(env, alpha=0.1, epsilon=0.1, gamma=1.0, nsteps=300000, epsilon_decay=False, visualize=False)
 #%%
 visualize_range = -1000
-plt.plot((np.array(obs_list)[:,0])[:visualize_range], label="angle" )
-plt.plot(np.array(reward_list[:visualize_range])+4, label="reward" , alpha=0.5)
+plt.plot((np.array(obs_list)[:,0]), label="angle" )
+plt.plot(np.array(reward_list), label="reward" , alpha=0.5)
+plt.yscale("symlog")
 plt.legend()
 plt.show()
+#%%
+np.save("Qmat.npy",Qmat)
 # %%
 #use the Q matrix calculated to visualize it
-
-Qmat, obs_list, reward_list = QlearnGrid(env, alpha=0.1, epsilon=0, gamma=1.0, nsteps=100, epsilon_decay=False, visualize=True)
+np.load("Qmat.npy")
+#%%
+Qmat, obs_list, reward_list = QlearnGrid(env, Qmat=Qmat, alpha=0.1, epsilon=0, gamma=1.0, nsteps=5000, epsilon_decay=False, visualize=True)
 # %%
