@@ -3,7 +3,7 @@ from torch.nn.utils import clip_grad_value_
 from torch import device, save, no_grad
 from torch.utils.data import DataLoader
 from torch.nn import Module, MSELoss
-from torch import tensor, float32, mean
+from torch import tensor, float32, mean, save
 from torch.optim import Adam
 from pandas import DataFrame
 from os.path import join, exists
@@ -119,38 +119,38 @@ class Trainer(Model_processes):
 
         # Create a progress bar using TQDM
         stdout.flush()
-        with tqdm(total=len(dl), desc=f'Training') as pbar:
-            # Iterate over the training dataset
-            for inputs, truths in dl:
-                # Zero the gradients from the previous step
-                self.optimizer.zero_grad()
+        # with tqdm(total=len(dl), desc=f'Training', leave=True) as pbar:
+        # Iterate over the training dataset
+        for inputs, truths in dl:
+            # Zero the gradients from the previous step
+            self.optimizer.zero_grad()
 
-                # Move the inputs and truths to the target device
-                inputs = tensor(inputs, device=self.device, dtype=float32)
-                inputs.required_grad = True  # Fix for older PyTorch versions
-                truths = tensor(truths, device=self.device, dtype=float32)
+            # Move the inputs and truths to the target device
+            inputs = tensor(inputs, device=self.device, dtype=float32)
+            inputs.required_grad = True  # Fix for older PyTorch versions
+            truths = tensor(truths, device=self.device, dtype=float32)
 
-                # Run model on the inputs
-                output = self.model(inputs)
+            # Run model on the inputs
+            output = self.model(inputs)
 
-                # Perform backpropagation
-                loss = self.criterion(output, truths)
-                loss.backward()
-                clip_grad_value_(self.model.parameters(), 0.1)
-                self.optimizer.step()
+            # Perform backpropagation
+            loss = self.criterion(output, truths)
+            loss.backward()
+            clip_grad_value_(self.model.parameters(), 0.1)
+            self.optimizer.step()
 
-                # Store the metrics of this step
-                step_metrics = {
-                    'loss': loss.item(),
-                }
+            # Store the metrics of this step
+            step_metrics = {
+                'loss': loss.item(),
+            }
 
-                # Update the progress bar
-                pbar.set_postfix(**step_metrics)
-                pbar.update(1)
+            # Update the progress bar
+            # pbar.set_postfix(**step_metrics)
+            # pbar.update(1)
 
-                # Add to epoch's metrics
-                for k,v in step_metrics.items():
-                    epoch_metrics[k].append(v)
+            # Add to epoch's metrics
+            for k,v in step_metrics.items():
+                epoch_metrics[k].append(v)
 
         stdout.flush()
 
@@ -172,7 +172,7 @@ class Trainer(Model_processes):
 
         # Create a progress bar using TQDM
         stdout.flush()
-        with no_grad(), tqdm(dl, desc=f'Validation') as pbar:
+        with no_grad():#, tqdm(dl, desc=f'Validation', leave=True) as pbar:
             # Iterate over the validation dataloader
             for inputs, truths in dl:
                  # Move the inputs and truths to the target device
@@ -190,8 +190,8 @@ class Trainer(Model_processes):
                 }
 
                 # Update the progress bar
-                pbar.set_postfix(**step_metrics)
-                pbar.update(1)
+                # pbar.set_postfix(**step_metrics)
+                # pbar.update(1)
 
                 amount += 1
                 total_loss += step_metrics["loss"]
@@ -204,7 +204,7 @@ class Trainer(Model_processes):
 
         # Return mean loss and accuracy
         return {
-            "loss": [total_loss],
+            "loss": total_loss,
         }
 
     def fit(self, epochs:int, batch_size:int, save_log:bool=True):
@@ -217,6 +217,7 @@ class Trainer(Model_processes):
         # A Dataloader loads a batch of samples from the each dataset split and concatenates these samples into a batch.
         dl_train = self.train
         dl_val = self.val
+        best_val = 100000
 
         # Store metrics of the training process (plot this to gain insight)
         df_train = DataFrame()
@@ -230,6 +231,9 @@ class Trainer(Model_processes):
 
             metrics_val = self.val_epoch(dl_val)
             df_val = df_val.append(DataFrame({'epoch': [epoch], **metrics_val}), ignore_index=True)
+            if metrics_val["loss"]<best_val:
+                best_val = metrics_val["loss"]
+                self.save_model(f'{self.DIR}\\{self.model_name}.pt')
 
         if save_log:
             # Save the model data
@@ -243,6 +247,9 @@ class Trainer(Model_processes):
             return df_val["loss"].min()
 
         # Return a dataframe that logs the training process. This can be exported to a CSV or plotted directly.
+    
+    def save_model(self, DIR: str | None = None):
+        save(self.model, 'savefolderpytorch\\NARX\\best_model.pt')
 
 class NOE_Trainer(Model_processes):
     """NOE Trainer class, for other models use the other trainer class"""

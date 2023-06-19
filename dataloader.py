@@ -139,3 +139,36 @@ class DATA():
             U.append(udata[k-nf:k])
             Y.append(ydata[k-nf:k])
         return array(U), array(Y)
+    
+    def testsubmissionfiles1(self, na, nb):
+        """Returns the test submission files"""
+        if na<1 or nb<1:
+            raise ValueError("na and nb must be positive integers")
+        if na>15 or nb>15:
+            raise ValueError("na and nb must be smaller than 15")
+        
+        testsub1 = DataFrame()
+        for i in range(1,nb+1):
+            testsub1[f"u[k-{i}]"] = self.testsub[f"u[k-{i}]"]
+        for i in range(1,na+1):
+            testsub1[f"y[k-{i}]"] = self.testsub[f"y[k-{i}]"]
+        testsub1["y[k]"] = self.testsub["y[k-0]"]
+        
+        return testsub1
+    
+    def testsubmissionfiles2(self, na, nb):
+        """Returns the test submission files"""
+        if na<1 or nb<1:
+            raise ValueError("na and nb must be positive integers")
+        if na>15 or nb>15:
+            raise ValueError("na and nb must be smaller than 15")
+        
+        testsub2 = DataFrame()
+        mnanb = max(na, nb)
+        for i in range(1, nb+1):
+            testsub2[f"u[k-{i-1}]"] = self.testsim.iloc[mnanb-i+1:-i]["u"]
+        for j in range(1, na+1):
+            testsub2[f"y[k-{j}]"] = self.testsim.iloc[mnanb-j:-j]["th"]
+        testsub2["y[k]"] = self.testsim.iloc[mnanb:]["u"]
+        
+        return testsub2
