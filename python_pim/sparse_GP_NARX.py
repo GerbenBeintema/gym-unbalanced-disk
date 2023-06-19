@@ -74,6 +74,7 @@ plt.legend()
 plt.title(f'Sparse GP on {N} datapoints')
 
 
+
 #%% Simulation on validation data
 model = model_sparse # sparse, use model_full for full
 fmodel = lambda u, y: model.predict(np.concatenate([u,y])[None,:])

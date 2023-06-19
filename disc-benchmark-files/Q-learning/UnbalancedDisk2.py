@@ -51,18 +51,17 @@ class UnbalancedDisk(gym.Env):
         self.reset()
         
     def reward_function(self):
+        
         self.omega_max = max(self.omega, self.omega_max)
         obs = self.get_obs()
         th = np.arctan2(obs[0], obs[1])
         omega = obs[2]
-        
-        if self.th > np.pi/2:
-            return 1/np.abs((np.pi/2-np.abs(th))+0.1) +10
-        # if reached top and standing still then large reward
+        if np.abs(th) > np.pi-0.1 and np.abs(omega) > 1e-2:
+            return -10000
         elif np.abs(th) > np.pi-0.1 and np.abs(omega) < 1e-2:
-            return +1000000
-        else:
-            return -1 - np.abs(np.pi-np.abs(th))*5
+            return +100000000
+        
+        return abs(omega)*10 -100
 
     def step(self, action):
         #convert action to u
