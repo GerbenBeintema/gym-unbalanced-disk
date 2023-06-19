@@ -76,9 +76,3 @@ plt.show()
 
 Qmat,obs_list, reward_list = Qlearn(env,Qmat, alpha=0.1, epsilon=0, gamma=0.99, nsteps=300,visualize=True)
 
-# %%
-import pickle
-file_path = r"Good_Qmat.pkl"
-with open(file_path, "wb") as file:
-    pickle.dump(Qmat, file)
-# %%

@@ -52,7 +52,7 @@ class UnbalancedDisk(gym.Env):
         
     def reward_function(self):
         
-        self.omega_max = max(self.omega, self.omega_max)
+        
         obs = self.get_obs()
         th = np.arctan2(obs[0], obs[1])
         omega = obs[2]
