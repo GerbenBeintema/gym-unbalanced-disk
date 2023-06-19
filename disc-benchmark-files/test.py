@@ -48,3 +48,21 @@ plt.plot(Ytrain_pred, c='r',alpha=0.5)
 plt.scatter(np.arange(len(Ytrain)),Ytrain,alpha=1, s=0.1)
 np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
 # %%
+import numpy as np
+import math
+k = 1000
+S = 1
+Nsteps = 100
+t = 1200
+max_plottime = 6000  # seconds
+Tstep = math.ceil(max_plottime / Nsteps)  # make the simulation as long as the measurement
+time = np.arange(Nsteps) * Tstep  # Generate time values
+time = time.astype(np.float64)
+# Calculate x and y using the formula
+x = time
+y = np.square(time) + S * time/10000 + t
+
+# Store x and y in an array
+Mean_Result = np.column_stack((x, y))
+print(y)
+# %%
