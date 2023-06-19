@@ -92,8 +92,14 @@ class UnbalancedDisk_exp(gym.Env):
     def step(self, action):
         if not self.connected:
             raise ValueError('not connected, use env.try_connect')
+        
         #convert action to u
-        self.u = np.clip(action,-self.umax,self.umax)
+        self.u = action #continuous
+        # self.u = [-3,-1,0,1,3][action] #discrate
+        # self.u = [-3,3][action] #discrate
+
+        ##### Start Do not edit ######
+        self.u = np.clip(self.u,-self.umax,self.umax)
 
         #apply action
         global eng

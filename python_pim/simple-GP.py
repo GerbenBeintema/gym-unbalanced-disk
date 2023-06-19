@@ -1,20 +1,15 @@
+#%%
 import numpy as np
 import os
-# make sure that the current working directory is the directory of the script
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+import matplotlib.pyplot as plt
+from pim_support import *
+from sklearn import linear_model
+from sklearn import gaussian_process
+from sklearn.gaussian_process.kernels import RBF, ExpSineSquared, WhiteKernel
 
 
-out = np.load('training-data.npz')
-th_train = out['th'] #th[0],th[1],th[2],th[3],...
-u_train = out['u'] #u[0],u[1],u[2],u[3],...
-
-# data = np.load('test-prediction-submission-file.npz')
-data = np.load('test-prediction-submission-file.npz')
-upast_test = data['upast'] #N by u[k-15],u[k-14],...,u[k-1]
-thpast_test = data['thpast'] #N by y[k-15],y[k-14],...,y[k-1]
-# thpred = data['thnow'] #all zeros
-
-
+th_train, u_train, upast_test, thpast_test = import_data()
+th_train = th_train[:10000]
 def create_IO_data(u,y,na,nb):
     X = []
     Y = []
@@ -27,10 +22,10 @@ na = 5
 nb = 5
 Xtrain, Ytrain = create_IO_data(u_train, th_train, na, nb)
 
-from sklearn import linear_model
-reg = linear_model.LinearRegression()
+kernel = RBF(length_scale=1.0, length_scale_bounds=(1e-1, 10.0)) 
+reg = gaussian_process.GaussianProcessRegressor(kernel=kernel)
 reg.fit(Xtrain,Ytrain)
-
+#%%
 Ytrain_pred = reg.predict(Xtrain)
 print('train prediction errors:')
 print('RMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5,'radians')
@@ -41,6 +36,12 @@ print('NRMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5/Ytrain.std()*100,'%')
 Xtest = np.concatenate([upast_test[:,15-nb:], thpast_test[:,15-na:]],axis=1)
 
 Ypredict = reg.predict(Xtest)
-assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
 
-np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
+assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
+plt.plot(Ytrain_pred, c='r',alpha=0.5)
+plt.scatter(np.arange(len(Ytrain)),Ytrain,alpha=1, s=0.1)
+
+plt.plot()
+
+# np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
+# %%

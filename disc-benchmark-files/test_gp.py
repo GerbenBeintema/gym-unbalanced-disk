@@ -1,9 +1,10 @@
+#%%
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 # make sure that the current working directory is the directory of the script
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-
-
+print(os.getcwd())
 out = np.load('training-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
 u_train = out['u'] #u[0],u[1],u[2],u[3],...
@@ -26,11 +27,12 @@ def create_IO_data(u,y,na,nb):
 na = 5
 nb = 5
 Xtrain, Ytrain = create_IO_data(u_train, th_train, na, nb)
-
-from sklearn import linear_model
-reg = linear_model.LinearRegression()
+Xtrain = Xtrain[:10000]
+Ytrain = Ytrain[:10000]
+from sklearn import gaussian_process
+reg = gaussian_process.GaussianProcessRegressor()
 reg.fit(Xtrain,Ytrain)
-
+#%%
 Ytrain_pred = reg.predict(Xtrain)
 print('train prediction errors:')
 print('RMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5,'radians')
@@ -41,6 +43,18 @@ print('NRMS:', np.mean((Ytrain_pred-Ytrain)**2)**0.5/Ytrain.std()*100,'%')
 Xtest = np.concatenate([upast_test[:,15-nb:], thpast_test[:,15-na:]],axis=1)
 
 Ypredict = reg.predict(Xtest)
+
 assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
 
-np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
+
+plt.plot(Ytrain_pred, c='r',alpha=0.5)
+plt.scatter(np.arange(len(Ytrain)),Ytrain,alpha=1, s=0.1)
+
+plt.figure()
+plt.title('prediction on the training set')
+plt.plot(Ypredict, c='r',alpha=0.5)
+plt.scatter(np.arange(len(Ypredict)),Ypredict,alpha=1, s=0.1)
+
+
+# np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
+# %%

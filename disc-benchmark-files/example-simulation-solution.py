@@ -1,4 +1,7 @@
 import numpy as np
+import os
+# go to file location
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 out = np.load('training-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
