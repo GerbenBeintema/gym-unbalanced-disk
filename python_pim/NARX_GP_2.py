@@ -22,7 +22,7 @@ for i in range(batches):
     make_training_data(th_train,u_train,na,nb)
 
     Xtrain = th_train[i*batch_size:i*batch_size+batch_size].copy()
-    Ytrain =u_train[i*batch_size:i*batch_size+batch_size].copy()
+    Ytrain = u_train[i*batch_size:i*batch_size+batch_size].copy()
     Xdata, Ydata = make_training_data(Xtrain,Ytrain, na, nb)
     print(f"shape of Xdata: {Xdata.shape} , shape of Ydata: {Ydata.shape}")
     

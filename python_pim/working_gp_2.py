@@ -15,7 +15,7 @@ X,Y=  make_training_data(th_train,u_train,na,nb)
 Y = Y[:,None]
 X = X[0:-60000]
 Y = Y[0:-60000]
-# # Define the kernel
+# # Define the kernela
 # kernel = GPy.kern.RBF(input_dim=5, variance=0.1, lengthscale=0.5) 
 
 
