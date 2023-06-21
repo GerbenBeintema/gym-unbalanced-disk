@@ -4,6 +4,14 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ExpSineSquared, WhiteKernel
 import os
 
+def compute_rms(Y_pred, Y_gt):
+    assert Y_pred.shape == Y_gt.shape, f'Y_pred and Y_gt should have the same shape, but got shapes {Y_pred.shape} and {Y_gt.shape}'
+    rms_rad =  np.mean((Y_pred-Y_gt)**2)**0.5
+    rms_deg = np.mean((Y_pred-Y_gt)**2)**0.5/np.pi*180
+    nrms =  np.mean((Y_pred-Y_gt)**2)**0.5/Y_gt.std()*100
+    return rms_rad, rms_deg, nrms
+    
+    
 def import_data():
     
     # go the parent directory
@@ -50,15 +58,13 @@ def use_NARX_model_in_simulation(ulist, ylist, f, na, nb): # only first 50 value
     ypast = ylist[-na:] 
     
     for unow in ulist[50:]:
-        # make the last value of upast the current value of u, so that we have past outputs and past+present inputs
-        upast.append(unow)
-        upast.pop(0)
-        
         #compute the current y given by f
         out = f(upast,ypast) 
         ynow, y_cov = out[0].item(), out[1].item()
                 
         #update past arrays
+        upast.append(unow)
+        upast.pop(0)
         ypast.append(ynow)
         ypast.pop(0)
         
@@ -68,20 +74,19 @@ def use_NARX_model_in_simulation(ulist, ylist, f, na, nb): # only first 50 value
     return np.array(ylist), np.array(y_cov_list) #return result
 
 
-
-
-def make_training_data(ulist,ylist,na,nb, train_amount=1):
+def make_training_data(ulist,ylist,na,nb, train_amount=1, present_input=False):
     X_train = []
     Y_train = []
-    for k in range(max(na+1,nb),round(train_amount*len(ulist))): #skip the first few indexes 
-        X_train.append(np.concatenate([ulist[k-nb:k],ylist[k-na-1:k-1]]))
+    for k in range(max(na+present_input,nb),round(train_amount*len(ulist))): #skip the first few indexes 
+        X_train.append(np.concatenate([ulist[k-nb:k],ylist[k-na-present_input:k-present_input]]))
         Y_train.append(ylist[k]) 
     if train_amount < 1:    
         X_val = []
         Y_val = []
         for k in range(round(train_amount*len(ulist)),len(ulist)):  
-            X_val.append(np.concatenate([ulist[k-nb:k],ylist[k-na-1:k-1]])) 
+            X_val.append(np.concatenate([ulist[k-nb:k],ylist[k-na-present_input:k-present_input]])) 
             Y_val.append(ylist[k]) 
-        return np.array(X_train), np.array(Y_train)[:,None], np.array(X_val), np.array(Y_val)[:,None]
+        return np.array(X_train), np.array(Y_train)[:,None], np.array(X_val), np.array(Y_val)
     else:
         return np.array(X_train), np.array(Y_train)[:,None]
+    
