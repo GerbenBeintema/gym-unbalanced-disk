@@ -1,0 +1,31 @@
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /home/dlehman/.conda/envs/ml4sc/lib/python3.10/site-packages/GPy/kern/src/stationary.py:168: RuntimeWarning:overflow encountered in divide
+ /home/dlehman/.conda/envs/ml4sc/lib/python3.10/site-packages/GPy/kern/src/rbf.py:52: RuntimeWarning:overflow encountered in square
+ /home/dlehman/.conda/envs/ml4sc/lib/python3.10/site-packages/GPy/kern/src/rbf.py:76: RuntimeWarning:invalid value encountered in multiply
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+ /gpfs/home4/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/Experiments_GP_NARX_full.py:62: FutureWarning:The frame.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+/var/spool/slurm/slurmd/job2951652/slurm_script: line 16: 3537698 Segmentation fault      python Experiments_GP_NARX_full.py
+
+JOB STATISTICS
+==============
+Job ID: 2951652
+Cluster: snellius
+User/Group: dlehman/dlehman
+State: RUNNING
+Nodes: 1
+Cores per node: 18
+CPU Utilized: 00:00:00
+CPU Efficiency: 0.00% of 05:12:36 core-walltime
+Job Wall-clock time: 00:17:22
+Memory Utilized: 0.00 MB (estimated maximum)
+Memory Efficiency: 0.00% of 0.00 MB (0.00 MB/node)
+WARNING: Efficiency statistics may be misleading for RUNNING jobs.

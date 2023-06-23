@@ -1,7 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, ExpSineSquared, WhiteKernel
 import os
 
 def compute_rms(Y_pred, Y_gt):

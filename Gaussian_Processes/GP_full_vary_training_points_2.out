@@ -1,0 +1,15 @@
+/var/spool/slurm/slurmd/job2958181/slurm_script: line 16: 3333254 Segmentation fault      python Experiments_GP_NARX_full.py
+
+JOB STATISTICS
+==============
+Job ID: 2958181
+Cluster: snellius
+User/Group: dlehman/dlehman
+State: FAILED (exit code 139)
+Nodes: 1
+Cores per node: 18
+CPU Utilized: 00:12:59
+CPU Efficiency: 26.23% of 00:49:30 core-walltime
+Job Wall-clock time: 00:02:45
+Memory Utilized: 74.88 GB
+Memory Efficiency: 0.00% of 0.00 MB
