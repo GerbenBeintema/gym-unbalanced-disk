@@ -4,9 +4,15 @@ import pandas as pd
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
 
 #%% HEATMAP NA NB
 
+def format_annotation(value):
+    if 10<= value <= 10000:
+        return f"{int(value):.0f}"
+    else:
+        return f"{value:.2g}"
 
 for split in ['val_pred', 'val_sim']:
     # Read the CSV file
@@ -14,7 +20,7 @@ for split in ['val_pred', 'val_sim']:
     data = pd.read_csv(file_path)
 
     # Replace 'na' and 'nb' with NaN in the nrms column
-    data['nrms'] = np.log(data['nrms']).replace(['na', 'nb'], np.nan)
+    data['nrms'] = (data['nrms']).replace(['na', 'nb'], np.nan)
 
     # Pivot the data to create a matrix for the heatmap
     heatmap_data = data.pivot('na', 'nb', 'nrms')
@@ -23,7 +29,7 @@ for split in ['val_pred', 'val_sim']:
     plt.figure(figsize=(10, 8))
 
     # Create the heatmap
-    ax = sns.heatmap(heatmap_data, vmin=-0.39, vmax=8, cmap=sns.cm.rocket_r,annot=True, linewidths=.5, fmt=".2f")
+    ax = sns.heatmap(heatmap_data, vmin=0.7, vmax=200, cmap=sns.cm.rocket_r,annot=True, linewidths=.5, fmt=".4g", norm=LogNorm())
 
     # Set the labels for x-axis and y-axis
     ax.set(xlabel='nb', ylabel='na')
@@ -35,6 +41,11 @@ for split in ['val_pred', 'val_sim']:
     # Set the position of x-axis ticks and label
     ax.xaxis.set_ticks_position('top')
     ax.xaxis.set_label_position('top')
+
+    for i, annotation in enumerate(ax.texts):
+        ax.texts[i].set_text(format_annotation(float(annotation.get_text())))
+        
+
 
     # Display the heatmap
     plt.show()
@@ -84,7 +95,7 @@ for split in ['val_pred', 'val_sim']:
     csv_path = '/home/dlehman/5SC28-ML4SC-gym-unbalanced-disk/Gaussian_Processes/results/sparse_GP_varying_inducing_points/'+split+'.csv'
     data = pd.read_csv(csv_path)
 
-    data['nrms'] = np.log(data['nrms'])
+    data['nrms'] = (data['nrms'])
     data['N_training_points'] = data['N_training_points'].astype('int')
     data['N_inducing_points'] = data['N_inducing_points'].astype('int')
 
@@ -93,7 +104,8 @@ for split in ['val_pred', 'val_sim']:
 
     # Plot the heatmap using seaborn
     plt.figure(figsize=(10, 8))  # Set the figure size
-    sns.heatmap(pivot_data, vmin=-0.39, vmax=8 ,annot=True, cmap=sns.cm.rocket_r, fmt=".2f", cbar=True)  # Customize the heatmap
+    # sns.set_style('ticks')  # Remove the gridlines
+    sns.heatmap(pivot_data, vmin=-0.39, vmax=8 ,annot=True, cmap=sns.cm.rocket_r, fmt=".3g", cbar=True, norm = LogNorm(), linewidths=0.5)  # Customize the heatmap
 
     # Set the axis labels and title
     plt.xlabel('Number of training points')

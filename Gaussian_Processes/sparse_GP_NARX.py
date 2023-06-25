@@ -2,7 +2,7 @@
 import GPy
 import numpy as np
 import matplotlib.pyplot as plt
-from pim_support import use_NARX_model_in_simulation, import_data, make_training_data
+from functions import use_NARX_model_in_simulation, import_data, make_training_data
 import pandas as pd
 import os
 
