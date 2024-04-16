@@ -9,9 +9,9 @@ import time
 global eng, eng_active
 eng_active = False
 
-class UnbalancedDisk_exp(gym.Env):
+class UnbalancedDisk_exp_matlab(gym.Env):
     '''
-    UnbalancedDisk_exp
+    UnbalancedDisk_exp_matlab
     th =            
                   +-pi
                     |
@@ -246,15 +246,15 @@ class UnbalancedDisk_exp(gym.Env):
             self.connected = False
         self.close_viewer()
 
-class UnbalancedDisk_exp_sincos(UnbalancedDisk_exp):
-    """docstring for UnbalancedDisk_exp_sincos"""
+class UnbalancedDisk_exp_matlab_sincos(UnbalancedDisk_exp_matlab):
+    """docstring for UnbalancedDisk_exp_matlab_sincos"""
     def __init__(self, umax=3., dt = 0.025):
-        super(UnbalancedDisk_exp_sincos, self).__init__(umax=umax, dt=dt)
+        super(UnbalancedDisk_exp_matlab_sincos, self).__init__(umax=umax, dt=dt)
         low = [-1,-1,-40.] 
         high = [1,1,40.]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(3,))
 
     def get_obs(self):
-        super(UnbalancedDisk_exp_sincos, self).get_obs()
+        super(UnbalancedDisk_exp_matlab_sincos, self).get_obs()
         return np.array([np.sin(self.th), np.cos(self.th), self.omega])
 
