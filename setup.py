@@ -5,7 +5,7 @@ packages = [a for a in find_namespace_packages(where='.') if a.find('gym_unbalan
 
 setuptools.setup(
       name='gym_unbalanced_disk',
-      version='0.3.11',
+      version='0.4.1',
       description='An OpenAI gym environment for unbalanced disk.',
       url="https://github.com/GerbenBeintema/gym-unbalanced-disk",
       author = 'Gerben Beintema',
@@ -13,6 +13,6 @@ setuptools.setup(
       license = 'BSD 3-Clause License',
       python_requires = '>=3.6',
       packages=packages,
-      install_requires = ['gym==0.21','numpy','scipy', 'pygame'],
+      install_requires = ['gymnasium','numpy','scipy', 'pygame', 'pyusb', 'libusb', 'libusb-package'],
       include_package_data=True
-      )
+)

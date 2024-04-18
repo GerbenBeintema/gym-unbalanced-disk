@@ -1,6 +1,6 @@
 
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 import numpy as np
 from scipy.integrate import solve_ivp
 from os import path
@@ -109,7 +109,7 @@ class UnbalancedDisk_exp_matlab(gym.Env):
         
         obs = self.get_obs()
         reward = self.reward_fun(self)
-        return obs, reward, False, {}
+        return obs, reward, False, False, {}
         
     def reset(self,seed=None):
         if not self.connected:

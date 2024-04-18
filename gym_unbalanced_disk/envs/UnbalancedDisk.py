@@ -1,6 +1,6 @@
 
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 import numpy as np
 from scipy.integrate import solve_ivp
 from os import path
@@ -68,7 +68,7 @@ class UnbalancedDisk(gym.Env):
         ##### End do not edit   #####
 
         reward = self.reward_fun(self)
-        return self.get_obs(), reward, False, {}
+        return self.get_obs(), reward, False, False, {}
          
     def reset(self,seed=None):
         self.th = np.random.normal(loc=0,scale=0.001)

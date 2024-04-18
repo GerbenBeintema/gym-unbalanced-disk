@@ -1,6 +1,6 @@
 
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 import numpy as np
 from scipy.integrate import solve_ivp
 from os import path
@@ -27,14 +27,20 @@ class UnbalancedDisk_exp_python(gym.Env):
                     0  = starting location
 
     '''
-    def __init__(self, umax=3., dt=0.025, force_restart_dev=False, inactivity_release_time=3.):
+    def __init__(self, umax=3., dt=0.025, force_restart_dev=False, inactivity_release_time=3):
+        '''
+        umax : the maximal allowable input
+        dt : the sample time
+        force_restart_dev : set to true to reset connection
+        inactivity_release_time : If the setup has not recived any inputs for ~inactivity_release_time/20 seconds than the input will be set to zero automaticly
+        '''
         global dev, dev_active
-        self.connected = False
         if dev_active:
             self.dev = dev
         if not dev_active or force_restart_dev:
             self.init_dev()
 
+        assert isinstance(inactivity_release_time, int)
         self.set_inactivity_release_time(inactivity_release_time)
 
         self.umax = umax
@@ -51,6 +57,12 @@ class UnbalancedDisk_exp_python(gym.Env):
         #Viewer things
         self.viewer = None
         self.u = 0. #for visual
+
+    def init_encoder(self):
+        data_w=[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
+        self.dev.write(0x02,data_w,2)
+        data_w=[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
+        self.dev.write(0x02,data_w,2)
 
     def set_inactivity_release_time(self, inactivity_release_time):
         self.inactivity_release_time=inactivity_release_time
@@ -76,44 +88,51 @@ class UnbalancedDisk_exp_python(gym.Env):
         # self.u = [-3,-1,0,1,3][action] #discrate
         # self.u = [-3,3][action] #discrate
 
-        ##### Start Do not edit ######
+        ##### Do not edit whats below ######
         self.u = np.clip(self.u,-self.umax,self.umax)
 
 
-        DacMin,DacMax=-10, 10
-        digital_input = int((voltage-DacMin)/(DacMax-DacMin)*65536)
+        DacMin, DacMax, Relais= -10, 10, 1
+        digital_input = int((self.u-DacMin)/(DacMax-DacMin)*65536)
         digital_in_sec = divmod(digital_input,256)
 
-        data_pack=[0,0,Result[0],0,0,self.Relais,Result[1],self.HoldTime,0,0,0,0,0,0,0,0]
+        data_pack=[0,0,digital_in_sec[0],0,0,Relais,digital_in_sec[1],self.inactivity_release_time,0,0,0,0,0,0,0,0]
         self.dev.write(0x02,data_pack,10)
         
-        time.sleep(self.dt)
+        start_t = time.time()
+        while time.time() - start_t<self.dt:
+            pass
         obs = self.get_obs()
         reward = self.reward_fun(self)
-        return obs, reward, False, {}
+        return obs, reward, False, False, {}
         
     def reset(self,seed=None):
-        # if not self.connected:
-        #     raise ValueError('not connected, use env.try_connect')
-        # global eng
-        # eng.fugiboard('Write', self.H, 0., 1., 0., 0.0)
-        # #wait until readout does not change and 
-        # omega_now = self.get_obs()[1] #finish this
-        # t_start = time.time()
-        # while time.time()-t_start<10: #timeout
-        #     time.sleep(0.1)
-        #     omega_new = self.get_obs()[1]
-        #     if abs(omega_new-omega_now)==0:
-        #         break
-        #     omega_now = omega_new
-
-        # time.sleep(0.1)
-        # # eng.fugiboard('Write', self.H, 1., 1., 0., 0.)          # Reset position
+        theta_now = self.get_obs()[0]
+        t_start = time.time()
+        while time.time()-t_start<30:
+            time.sleep(0.1)
+            theta_new = self.get_obs()[0]
+            if abs(theta_new-theta_now)==0:
+                break
+            theta_now = theta_new
+        time.sleep(0.1)
+        self.init_encoder()
         return self.get_obs()
 
     def get_obs(self):
-        self.data_pack_read=self.dev.read(0x86,16,1)
-        self.data_pack_read=self.dev.read(0x86,16,1) #not sure why this works better than one read WL
+        couldnotreadcounter = 0
+        while True:
+            try:
+                self.data_pack_read=self.dev.read(0x86,16,1)
+                break
+            except usb.USBError as e:
+                print('USB read error')
+                couldnotreadcounter += 1
+                time.sleep(0.001)
+                if couldnotreadcounter>20:
+                    raise e
+        # self.data_pack_read=self.dev.read(0x86,16,1) #not sure why this works better than one read WL
+        data = self.data_pack_read
         # Write: command, digitalout, [dac1( dac2)]
         # Read:  [status elapsedtime position1 position2 motorcurrent motorvoltage externalvoltage digitalin averagespeed1 averagespeed2]
         # Read:  [status elapsedtime position1 position2 motorcurrent beamvoltage pendulumvoltage digitalin]
@@ -132,10 +151,13 @@ class UnbalancedDisk_exp_python(gym.Env):
         #7 = 0
         #8 = -inf?
 
+        d = data
+        omega = d[10]*-3.644127510645671 + d[14]*2.01877019753875 + d[12]*1.6121463023483062 + d[9]*-0.013751126061226403 #not entirely correct?
+
         #obs[2]: 2 theta
         self.th = position
         #obs[3]: 3 omega
-        self.omega = 0.#self.obs_raw[3]
+        self.omega = omega#self.obs_raw[3]
         return np.array([self.th, self.omega])
 
     def render(self, mode='human'):
@@ -219,18 +241,16 @@ class UnbalancedDisk_exp_python(gym.Env):
     def close_viewer(self):
         if self.viewer is not None:
             import pygame
-
             pygame.display.quit()
             pygame.quit()
             self.isopen = False
             self.viewer = None
 
     def close(self):
-        global eng, eng_active
-        if self.connected:
-            eng.exit()
-            eng_active = False
-            self.connected = False
+        global dev, dev_active
+        if dev_active:
+            usb.util.dispose_resources(self.dev)
+            dev_active = False
         self.close_viewer()
 
 class UnbalancedDisk_exp_python_sincos(UnbalancedDisk_exp_python):
