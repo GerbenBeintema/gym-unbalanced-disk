@@ -15,7 +15,7 @@ class UnbalancedDisk(gym.Env):
                     |
                     0  = starting location
     '''
-    def __init__(self, umax=3., dt = 0.025):
+    def __init__(self, umax=3., dt = 0.025, render_mode='human'):
         ############# start do not edit  ################
         self.omega0 = 11.339846957335382
         self.delta_th = 0
@@ -45,6 +45,7 @@ class UnbalancedDisk(gym.Env):
 
         self.reward_fun = lambda self: np.exp(-(self.th%(2*np.pi)-np.pi)**2/(2*(np.pi/7)**2)) #example reward function, change this!
         
+        self.render_mode = render_mode
         self.viewer = None
         self.u = 0 #for visual
         self.reset()
@@ -74,14 +75,14 @@ class UnbalancedDisk(gym.Env):
         self.th = np.random.normal(loc=0,scale=0.001)
         self.omega = np.random.normal(loc=0,scale=0.001)
         self.u = 0
-        return self.get_obs()
+        return self.get_obs(), {}
 
     def get_obs(self):
         self.th_noise = self.th + np.random.normal(loc=0,scale=0.001) #do not edit
         self.omega_noise = self.omega + np.random.normal(loc=0,scale=0.001) #do not edit
         return np.array([self.th_noise, self.omega_noise])
 
-    def render(self, mode='human'):
+    def render(self):
         import pygame
         from pygame import gfxdraw
         
@@ -153,7 +154,7 @@ class UnbalancedDisk(gym.Env):
         self.viewer.blit(self.surf, (0, 0))
         if self.u:
             self.viewer.blit(arrow_rot, (screen_width//2-arrow_size//2, screen_height//2-arrow_size//2))
-        if mode == "human":
+        if self.render_mode == "human":
             pygame.event.pump()
             pygame.display.flip()
 

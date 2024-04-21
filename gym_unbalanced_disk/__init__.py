@@ -16,25 +16,13 @@ register(
 )
 
 register(
-    id='unbalanced-disk-exp-matlab-v0',
-    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp_matlab',
+    id='unbalanced-disk-exp-v0',
+    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp',
     max_episode_steps=300
 )
 
 register(
-    id='unbalanced-disk-exp-matlab-sincos-v0',
-    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp_matlab_sincos',
-    max_episode_steps=300
-)
-
-register(
-    id='unbalanced-disk-exp-python-v0',
-    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp_python',
-    max_episode_steps=300
-)
-
-register(
-    id='unbalanced-disk-exp-python-sincos-v0',
-    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp_python_sincos',
+    id='unbalanced-disk-exp-sincos-v0',
+    entry_point='gym_unbalanced_disk.envs:UnbalancedDisk_exp_sincos',
     max_episode_steps=300
 )

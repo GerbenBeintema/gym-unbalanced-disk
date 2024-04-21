@@ -79,11 +79,7 @@ To use the experimental setup with the python environment you will need to follo
 
 1. Installation python simulator as shown before
 2. Install the USB drivers using the instructions in `WindowsDcscUSB/README.txt`. 
-3. Install MATLAB python engine. [See matlabworks](https://nl.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)
-  * To reduce errors launch the "anaconda PowerShell prompt" with "run as admin" by right-clicking executable. 
-  * Navigate to the MATLAB engine folder (e.g. `cd "C:\Program Files\MATLAB\R2021a\extern\engines\python"`) 
-  * Use `python setup.py install`
-  * Be sure that your python is compatible with you MATLAB version, [Table of compatible version](https://www.mathworks.com/content/dam/mathworks/mathworks-dot-com/support/sysreq/files/python-compatibility.pdf)
+3. Download the form [libsub](https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/).
 4. test connection by opening and running `examples-connect-to-exp/python-disk-test.ipynb`
 
 Now use the following to create an environment with a connection to the system

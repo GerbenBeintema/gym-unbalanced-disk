@@ -20,15 +20,16 @@ A disable driver signature enforcement:
 7) Click on Advanced options.
 8) Click on Startup Settings. (You might need to select "more options")
 9) Click on Restart.
-10) Wait while the PC restarts and gets to the Startup settings page. (don't press anything for this step)
-11) Then press key 7 to select "7) Disable driver signature enforcement".
-12) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
-13) Open the Start Menu, type "device manager" and start it.
-14) Right-click on the name of the setup (sometimes just called Unknown device) 
+10) Wait while the PC restarts and gets to the Startup settings page. 
+11) Enter the bitlocker code noted down in step 3 if asked for.
+12) Then press key 7 to select "7) Disable driver signature enforcement".
+13) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
+14) Open the Start Menu, type "device manager" and start it.
+15) Right-click on the name of the setup (sometimes just called Unknown device) 
     under "Other devices" and select Update driver software....
-15) Choose to Browse for driver software on your computer and point it to the Win10 
+16) Choose to Browse for driver software on your computer and point it to the Win10 
     sub-directory in the directory from step 11.
-16) Allow the installation of the unsigned driver. If the installation fails because 
+17) Allow the installation of the unsigned driver. If the installation fails because 
     a hash is missing, driver signature enforcment is still/again on. Retry the 
     procedure from step 1. If the installation fails again, seek help.
 

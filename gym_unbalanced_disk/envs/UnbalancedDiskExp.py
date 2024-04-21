@@ -11,14 +11,11 @@ global dev, dev_active
 dev_active = False
 
 #todo:
-# Reset posision
-# Omega from read
 # update documentation on install and usage
-# change default name to python
 
-class UnbalancedDisk_exp_python(gym.Env):
+class UnbalancedDisk_exp(gym.Env):
     '''
-    UnbalancedDisk_exp_python
+    UnbalancedDisk_exp
     th =            
                   +-pi
                     |
@@ -27,7 +24,7 @@ class UnbalancedDisk_exp_python(gym.Env):
                     0  = starting location
 
     '''
-    def __init__(self, umax=3., dt=0.025, force_restart_dev=False, inactivity_release_time=3):
+    def __init__(self, umax=3., dt=0.025, force_restart_dev=False, inactivity_release_time=3, render_mode='human'):
         '''
         umax : the maximal allowable input
         dt : the sample time
@@ -55,8 +52,9 @@ class UnbalancedDisk_exp_python(gym.Env):
         self.reward_fun = lambda self: np.exp(-((self.th)%(2*np.pi)-np.pi)**2/(2*(np.pi/7)**2)) #example reward function, change this!
 
         #Viewer things
+        self.render_mode = render_mode
         self.viewer = None
-        self.u = 0. #for visual
+        self.u = 0 #for visual
 
     def init_encoder(self):
         data_w=[1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ]
@@ -99,7 +97,7 @@ class UnbalancedDisk_exp_python(gym.Env):
         data_pack=[0,0,digital_in_sec[0],0,0,Relais,digital_in_sec[1],self.inactivity_release_time,0,0,0,0,0,0,0,0]
         self.dev.write(0x02,data_pack,10)
         
-        start_t = time.time()
+        start_t = time.time() #a more accurate waiter than time.sleep
         while time.time() - start_t<self.dt:
             pass
         obs = self.get_obs()
@@ -117,7 +115,7 @@ class UnbalancedDisk_exp_python(gym.Env):
             theta_now = theta_new
         time.sleep(0.1)
         self.init_encoder()
-        return self.get_obs()
+        return self.get_obs(), {}
 
     def get_obs(self):
         couldnotreadcounter = 0
@@ -160,7 +158,7 @@ class UnbalancedDisk_exp_python(gym.Env):
         self.omega = omega#self.obs_raw[3]
         return np.array([self.th, self.omega])
 
-    def render(self, mode='human'):
+    def render(self):
         import pygame
         from pygame import gfxdraw
         
@@ -232,7 +230,7 @@ class UnbalancedDisk_exp_python(gym.Env):
         self.viewer.blit(self.surf, (0, 0))
         if self.u:
             self.viewer.blit(arrow_rot, (screen_width//2-arrow_size//2, screen_height//2-arrow_size//2))
-        if mode == "human":
+        if self.render_mode == "human":
             pygame.event.pump()
             pygame.display.flip()
 
@@ -253,15 +251,15 @@ class UnbalancedDisk_exp_python(gym.Env):
             dev_active = False
         self.close_viewer()
 
-class UnbalancedDisk_exp_python_sincos(UnbalancedDisk_exp_python):
-    """docstring for UnbalancedDisk_exp_python_sincos"""
+class UnbalancedDisk_exp_sincos(UnbalancedDisk_exp):
+    """docstring for UnbalancedDisk_exp_sincos"""
     def __init__(self, umax=3., dt = 0.025):
-        super(UnbalancedDisk_exp_python_sincos, self).__init__(umax=umax, dt=dt)
+        super(UnbalancedDisk_exp_sincos, self).__init__(umax=umax, dt=dt)
         low = [-1,-1,-40.] 
         high = [1,1,40.]
         self.observation_space = spaces.Box(low=np.array(low,dtype=np.float32),high=np.array(high,dtype=np.float32),shape=(3,))
 
     def get_obs(self):
-        super(UnbalancedDisk_exp_python_sincos, self).get_obs()
+        super(UnbalancedDisk_exp_sincos, self).get_obs()
         return np.array([np.sin(self.th), np.cos(self.th), self.omega])
 

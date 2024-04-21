@@ -1,3 +1,2 @@
 from gym_unbalanced_disk.envs.UnbalancedDisk import UnbalancedDisk, UnbalancedDisk_sincos
-from gym_unbalanced_disk.envs.UnbalancedDiskExpMatlab import UnbalancedDisk_exp_matlab, UnbalancedDisk_exp_matlab_sincos
-from gym_unbalanced_disk.envs.UnbalancedDiskExpPython import UnbalancedDisk_exp_python, UnbalancedDisk_exp_python_sincos
+from gym_unbalanced_disk.envs.UnbalancedDiskExp import UnbalancedDisk_exp, UnbalancedDisk_exp_sincos
