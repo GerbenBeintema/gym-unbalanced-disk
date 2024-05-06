@@ -13,13 +13,21 @@ Note that the simulator is accurate model of the experimental setup for the prov
 
 ## 1. benchmark datasets used for identification tasks.
 
-In `disc-benchmark-files/` you can find
+In `disc-benchmark-files/` you can find the following:
+
+## 1.1. Training and test data:
 
 * `training-data.[csv,mat,npz]` which contains the data for your system identification task – you can partition this data into training, validation and test.
 * `test-prediction-submission-file.[csv,mat,npz]` contains the (past) input and output data required to perform a 1 step-ahead prediction. This also illustrates the file format that we expect for the prediction task submission (by replacing the zero entries of the y[k-0] output with your estimate).
 * `test-simulation-submission-file.[csv,mat,npz]` contains the input sequence and the first 50 output values of the system. The later output samples are replaced by zeros. This data should be used to simulate the remainder of the outputs of the system. This also illustrates the file format that we expect for the simulation task submission (by replacing the zero entries of the output with your estimate).
+
+## 1.2. Example usage of training and test data:
+
 * `example-prediction-solution.py` an example file which shows a simple linear ARX prediction solution using the datasets provided.
 * `example-simulation-solution.py` an example file which shows a simple linear ARX simulation solution using the datasets provided.
+
+## 1.3. Submission Validation checker:
+
 * `submission-file-checker.py` is run as `python submission-file-checker.py submitted-file solution-file` to compute the prediction/simulation errors. You can also run this file to check if your file has the appropriate format by running `python submission-file-checker.py submitted-file test-prediction-submission.npz` which successfully ends without an error if the submitted-file has the correct format
  
 ## 2.1 Simulator python
@@ -79,8 +87,8 @@ To use the experimental setup with the python environment you will need to follo
 
 1. Installation python simulator as shown before
 2. Install the USB drivers using the instructions in `WindowsDcscUSB/README.txt`. 
-3. Download the form [libsub](https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/).
-4. test connection by opening and running `examples-connect-to-exp/python-disk-test.ipynb`
+3. Download the form [libusb](https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/) (file: `libusb-win32-devel-filter-1.2.6.0.exe`).
+4. Test connection by opening and running `examples-connect-to-exp/python-disk-test.ipynb`
 
 Now use the following to create an environment with a connection to the system
 
