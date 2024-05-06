@@ -58,14 +58,14 @@ import gym, gym_unbalanced_disk, time
 env = gym.make('unbalanced-disk-v0', dt=0.025, umax=3.) 
 #env = gym_unbalanced_disk.UnbalancedDisk(dt=0.025, umax=3.) #alternative
 
-obs = env.reset()
+obs, info = env.reset()
 try:
     for i in range(200):
-        obs, reward, done, info = env.step(env.action_space.sample()) #random action
+        obs, reward, terminated, truncated, info = env.step(env.action_space.sample()) #random action
         print(obs,reward)
         env.render()
         time.sleep(1/24)
-        if done:
+        if terminated or truncated:
             obs = env.reset()
 finally: #this will always run
     env.close()
@@ -87,7 +87,7 @@ To use the experimental setup with the python environment you will need to follo
 
 1. Installation python simulator as shown before
 2. Install the USB drivers using the instructions in `WindowsDcscUSB/README.txt`. 
-3. Download the form [libusb](https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/) (file: `libusb-win32-devel-filter-1.2.6.0.exe`).
+3. Download the form [libusb](https://sourceforge.net/projects/libusb-win32/files/libusb-win32-releases/1.2.6.0/) (file: `libusb-win32-devel-filter-1.2.6.0.exe`). Install, run the program and apply a filter to "DCSC FPGA application" (`vid:04b4 pid:8612`).
 4. Test connection by opening and running `examples-connect-to-exp/python-disk-test.ipynb`
 
 Now use the following to create an environment with a connection to the system
