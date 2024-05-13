@@ -17,7 +17,7 @@ def create_IO_data(u,y,na,nb):
     return np.array(X), np.array(Y)
 
 na = 2
-nb = 20
+nb = 3
 Xtrain, Ytrain = create_IO_data(u_train, th_train, na, nb)
 
 from sklearn import linear_model
