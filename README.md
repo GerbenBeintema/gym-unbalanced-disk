@@ -32,7 +32,7 @@ In `disc-benchmark-files/` you can find the following:
  
 ## 1.4. Benchmark results
 
-When reporting the modelling results please include the following benchmark results these can compare to them.
+You can use the following baseline results to position the quality of your model estimates. Please include the baseline values when reporting about your model quality.
 
 **Simulation Results:**
 
