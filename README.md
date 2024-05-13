@@ -11,7 +11,7 @@ This repository includes
 
 Note that the simulator is accurate model of the experimental setup for the provided model parameters. 
 
-## 1. benchmark datasets used for identification tasks.
+# 1. benchmark datasets used for identification tasks.
 
 In `disc-benchmark-files/` you can find the following:
 
@@ -19,7 +19,7 @@ In `disc-benchmark-files/` you can find the following:
 
 * `training-data.[csv,mat,npz]` which contains the data for your system identification task – you can partition this data into training, validation and test.
 * `test-prediction-submission-file.[csv,mat,npz]` contains the (past) input and output data required to perform a 1 step-ahead prediction. This also illustrates the file format that we expect for the prediction task submission (by replacing the zero entries of the y[k-0] output with your estimate).
-* `test-simulation-submission-file.[csv,mat,npz]` contains the input sequence and the first 50 output values of the system. The later output samples are replaced by zeros. This data should be used to simulate the remainder of the outputs of the system. This also illustrates the file format that we expect for the simulation task submission (by replacing the zero entries of the output with your estimate).
+* `test-simulation-submission-file.[csv,mat,npz]` contains the input sequence and the first 50 output values of the system. The latter output samples are replaced by zeros. This data should be used to simulate the remainder of the outputs of the system. This also illustrates the file format that we expect for the simulation task submission (by replacing the zero entries of the output with your estimate).
 
 ## 1.2. Example usage of training and test data:
 
@@ -30,6 +30,25 @@ In `disc-benchmark-files/` you can find the following:
 
 * `submission-file-checker.py` is run as `python submission-file-checker.py submitted-file solution-file` to compute the prediction/simulation errors. You can also run this file to check if your file has the appropriate format by running `python submission-file-checker.py submitted-file test-prediction-submission.npz` which successfully ends without an error if the submitted-file has the correct format
  
+## 1.4. Benchmark results
+
+When reporting the modelling results please include the following benchmark results these can compare to them.
+
+**Simulation Results:**
+
+| Type          | RMSE (radians) | RMSE (deg) | 
+| ------------- | -------------- | ---------- | 
+| Lower bound   | 0.0413         | 2.37       |
+| Good NN model | 0.0948         | 5.43       | 
+| Linear Model  | 0.219          | 12.6       | 
+
+**Prediction Results:**
+
+| Type          | RMSE (radians) | RMSE (deg) | 
+| ------------- | -------------- | ---------- | 
+| Good NN model | 0.00382        | 0.219      | 
+| Linear Model  | 0.00665        | 0.381      | 
+
 ## 2.1 Simulator python
 
 ### Installation
@@ -72,7 +91,7 @@ finally: #this will always run
     env.close()
 ```
 
-Lastly, we also provide: 'unbalanced-disk-sincos-v0' or `gym_unbalanced_disk.UnbalancedDisk_sincos` which is the same environment but where angle is now expressed in sine and cos components. (useful for RL)
+Lastly, we also provide: 'unbalanced-disk-sincos-v0' or `gym_unbalanced_disk.UnbalancedDisk_sincos` which is the same environment but where angle is now expressed in sine and cosine components.
 
 ## 2.2 MATLAB Simulator
 
@@ -82,7 +101,7 @@ Note that The simulink model requires the Simulink 3D Animation toolbox to visua
 
 # 3. Connecting to the experimental setup
 
-# 3.1 Python connection
+## 3.1 Python connection
 
 To use the experimental setup with the python environment you will need to follow steps.
 
@@ -98,7 +117,7 @@ env = gym.make('unbalanced-disk-exp-v0', dt=0.025, umax=3.) #both are equivilent
 env = gym_unbalanced_disk.UnbalancedDisk(dt=0.025, umax=3.) #both are equivilent
 ```
 
-# 3.2 Matlab connection
+## 3.2 Matlab connection
 
 To use the experimental setup you will need to do the following things.
 
