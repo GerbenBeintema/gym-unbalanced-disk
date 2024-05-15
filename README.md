@@ -17,9 +17,9 @@ In `disc-benchmark-files/` you can find the following:
 
 ## 1.1. Training and test data:
 
-* `training-data.[csv,mat,npz]` which contains the data for your system identification task – you can partition this data into training, validation and test.
-* `test-prediction-submission-file.[csv,mat,npz]` contains the (past) input and output data required to perform a 1 step-ahead prediction. This also illustrates the file format that we expect for the prediction task submission (by replacing the zero entries of the y[k-0] output with your estimate).
-* `test-simulation-submission-file.[csv,mat,npz]` contains the input sequence and the first 50 output values of the system. The latter output samples are replaced by zeros. This data should be used to simulate the remainder of the outputs of the system. This also illustrates the file format that we expect for the simulation task submission (by replacing the zero entries of the output with your estimate).
+* `training-val-test-data.[csv,mat,npz]` which contains the data for your system identification task – you can partition this data into training, validation and test in the way that you see fit.
+* `hidden-test-prediction-submission-file.[csv,mat,npz]` contains the (past) input and output data required to perform a 1 step-ahead prediction. This also illustrates the file format that we expect for the prediction task submission (by replacing the zero entries of the y[k-0] output with your estimate).
+* `hidden-test-simulation-submission-file.[csv,mat,npz]` contains the input sequence and the first 50 output values of the system. The latter output samples are replaced by zeros. This data should be used to simulate the remainder of the outputs of the system. This also illustrates the file format that we expect for the simulation task submission (by replacing the zero entries of the output with your estimate).
 
 ## 1.2. Example usage of training and test data:
 
@@ -34,13 +34,15 @@ In `disc-benchmark-files/` you can find the following:
 
 You can use the following baseline results to position the quality of your model estimates. Please include the baseline values when reporting about your model quality.
 
+**Update 16 May: an updated hidden test dataset for the simulation has been released, and the simulation benchmarks have been updated**
+
 **Simulation Results:**
 
 | Type          | RMSE (radians) | RMSE (deg) | 
 | ------------- | -------------- | ---------- | 
-| Lower bound   | 0.0413         | 2.37       |
-| Good NN model | 0.0948         | 5.43       | 
-| Linear Model  | 0.219          | 12.6       | 
+| Lower bound   | 0.0195         | 1.12       |
+| Good NN model | 0.0271         | 1.55       | 
+| Linear Model  | 0.255          | 14.6       | 
 
 **Prediction Results:**
 

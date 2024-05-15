@@ -1,10 +1,10 @@
 import numpy as np
 
-out = np.load('training-data.npz')
+out = np.load('training-val-test-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
 u_train = out['u'] #u[0],u[1],u[2],u[3],...
 
-data = np.load('test-simulation-submission-file.npz')
+data = np.load('hidden-test-simulation-submission-file.npz')
 u_test = data['u']
 th_test = data['th'] #only the first 50 values are filled the rest are zeros
 
@@ -58,4 +58,4 @@ skip = 50
 th_test_sim = simulation_IO_model(lambda x: reg.predict(x[None,:])[0], u_test, th_test, skip=skip)
 
 assert len(th_test_sim)==len(th_test)
-np.savez('test-simulation-example-submission-file.npz', th=th_test_sim, u=u_test)
+np.savez('hidden-test-simulation-example-submission-file.npz', th=th_test_sim, u=u_test)

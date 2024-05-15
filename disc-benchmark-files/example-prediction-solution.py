@@ -1,11 +1,11 @@
 import numpy as np
 
-out = np.load('training-data.npz')
+out = np.load('training-val-test-data.npz')
 th_train = out['th'] #th[0],th[1],th[2],th[3],...
 u_train = out['u'] #u[0],u[1],u[2],u[3],...
 
 # data = np.load('test-prediction-submission-file.npz')
-data = np.load('test-prediction-submission-file.npz')
+data = np.load('hidden-test-prediction-submission-file.npz')
 upast_test = data['upast'] #N by u[k-15],u[k-14],...,u[k-1]
 thpast_test = data['thpast'] #N by y[k-15],y[k-14],...,y[k-1]
 # thpred = data['thnow'] #all zeros
@@ -39,4 +39,4 @@ Xtest = np.concatenate([upast_test[:,15-nb:], thpast_test[:,15-na:]],axis=1)
 Ypredict = reg.predict(Xtest)
 assert len(Ypredict)==len(upast_test), 'number of samples changed!!'
 
-np.savez('test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
+np.savez('hidden-test-prediction-example-submission-file.npz', upast=upast_test, thpast=thpast_test, thnow=Ypredict)
