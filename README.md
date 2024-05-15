@@ -13,6 +13,8 @@ Note that the simulator is accurate model of the experimental setup for the prov
 
 # 1. benchmark datasets used for identification tasks.
 
+**Update 15 May: an updated hidden test dataset for the simulation has been released, and the simulation benchmarks have been updated**
+
 In `disc-benchmark-files/` you can find the following:
 
 ## 1.1. Training and test data:
@@ -33,8 +35,6 @@ In `disc-benchmark-files/` you can find the following:
 ## 1.4. Benchmark results
 
 You can use the following baseline results to position the quality of your model estimates. Please include the baseline values when reporting about your model quality.
-
-**Update 16 May: an updated hidden test dataset for the simulation has been released, and the simulation benchmarks have been updated**
 
 **Simulation Results:**
 
