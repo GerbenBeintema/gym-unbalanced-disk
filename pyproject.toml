@@ -1,0 +1,28 @@
+
+[tool.poetry]
+name = "gym_unbalanced_disk"
+version = "0.4.4"
+description = "A gym environment for unbalanced disk."
+authors = ["Gerben I. Beintema"]
+license = "BSD 3-Clause License"
+readme = "README.md"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gym_unbalanced_disk*"]
+
+[tool.poetry.dependencies]
+gymnasium = "*"
+numpy = "*"
+scipy = "*"
+pygame = "*"
+pyusb = "*"
+libusb = "*"
+libusb-package = "*"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.setuptools]
+include-package-data = true

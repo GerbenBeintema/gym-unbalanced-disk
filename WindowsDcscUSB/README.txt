@@ -12,25 +12,24 @@ Installation for Windows 10/11:
 
 A disable driver signature enforcement:
 1) Connect a FPGA based setup, the driver installation will silently fail.
-2) Open the Start Menu, type "Bitlocker" and start it if present, otherwise continue to step 4.
-3) Click on "Back up your recovery key" and save on other device/write down your 48 digit recovery key.
-4) Hold shift while selecting restart to open Advcanced startup
-5) Click on the Start Menu button and type "recovery options".
-6) Click on Troubleshoot.
-7) Click on Advanced options.
-8) Click on Startup Settings. (You might need to select "more options")
-9) Click on Restart.
-10) Wait while the PC restarts and gets to the Startup settings page. 
-11) Enter the bitlocker code noted down in step 3 if asked for.
-12) Then press key 7 to select "7) Disable driver signature enforcement".
-13) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
-14) Open the Start Menu, type "device manager" and start it.
-15) Right-click on the name of the setup (sometimes just called Unknown device) 
+2) Open the Start Menu, type "Bitlocker" and start it if present, otherwise continue to step 4. 
+3) Click on "Back up your recovery key" and save on other device/write down your 48 digit recovery key. (Alternatively you can Open Command Prompt as Administrator and run `manage-bde -protectors C: -get`)
+4) Hold shift while selecting restart to open Advanced startup Or Click on the Start Menu button and type "recovery options".
+5) Click on Troubleshoot.
+6) Click on Advanced options.
+7) Click on Startup Settings. (You might need to select "more options")
+8) Click on Restart.
+9) Wait while the PC restarts and gets to the Startup settings page. 
+10) Enter the bitlocker code noted down in step 3 if asked for.
+11) Then press key 7 to select "7) Disable driver signature enforcement".
+12) Login again and locate the WindowsDcscUSB folder with the drivers. (cannot be contained in a zip)
+13) Open the Start Menu, type "device manager" and start it.
+14) Right-click on the name of the setup (sometimes just called Unknown device) 
     under "Other devices" and select Update driver software....
-16) Choose to Browse for driver software on your computer and point it to the Win10 
-    sub-directory in the directory from step 11.
-17) Allow the installation of the unsigned driver. If the installation fails because 
-    a hash is missing, driver signature enforcment is still/again on. Retry the 
+15) Choose to Browse for driver software on your computer and point it to the Win10 
+    sub-directory in the directory from step 12.
+16) Allow the installation of the unsigned driver. If the installation fails because 
+    a hash is missing, driver signature enforcement is still/again on. Retry the 
     procedure from step 1. If the installation fails again, seek help.
 
  

@@ -66,7 +66,7 @@ or download the repository and install using
 ```
 git clone https://github.com/GerbenBeintema/gym-unbalanced-disk.git #(or use manual download on the github page)
 cd gym-unbalanced-disk
-pip install -e .
+pip install
 ```
 
 By using git clone you are able to change aspects of the observation space or action space easily.
